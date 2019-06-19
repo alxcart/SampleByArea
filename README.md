@@ -1,2 +1,2 @@
-# amostraporarea
-Repositorio do plugin de amostragem por area
+# SampleByArea
+Repository of plugin sampling oriented by area
