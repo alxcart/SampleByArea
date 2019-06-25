@@ -21,8 +21,6 @@ This plugin elaborates the area-oriented sampling plan. It is based on the ISO 1
  *                                                                         *
  ***************************************************************************/
 """
-#from qgis.core import QgsProject, Qgis
-
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
@@ -35,12 +33,10 @@ import random
 
 from .constants import * # constants of project
 
-# baseado no plugin clip_multiple_layers (raster e vetor)
+# based on the clip_multiple_layers plugin
 import processing, os, subprocess, time
 from qgis.utils import *
-from qgis.core import *
-#from qgis.gui import QgsMessageBar
-# from qgis.PyQt.QtGui import QProgressBar
+
 from qgis.PyQt.QtCore import *
 
 from processing.algs.gdal.GdalUtils import GdalUtils
@@ -49,7 +45,6 @@ from processing.algs.gdal.GdalUtils import GdalUtils
 from .resources import *
 # Import the code for the dialog
 from .SampleByArea_dialog import SampleByAreaDialog
-##import os.path
 
 def truncate(f, n):
 #Truncates/pads a float f to n decimal places without rounding
@@ -60,7 +55,7 @@ def truncate(f, n):
     return '.'.join([i, (d+'0'*n)[:n]])
 
 def size_of_grid(size, units_id):
-#Convert km to layer units measurement / converte a distance em km para a unidade de medida do layer
+#Convert km to layer units measurement / Converte a distance em km para a unidade de medida do layer
     d=QgsDistanceArea()
     grid_size = 0.0 # Initial value of cell size / valor inicial do grid em km
     try: 
@@ -119,7 +114,7 @@ class SampleByArea:
         # Must be set in initGui() to survive plugin reloads
         #self.first_start = None
         
-        #Conectando os botoes e acoes
+        #Connecting the buttons and actions / Conectando os botoes e acoes
         self.dlg.lineEdit.clear()
         self.dlg.label_units.clear()
                 
@@ -248,7 +243,7 @@ class SampleByArea:
         self.dlg.lineEdit.setText(self.folderName);
 
     def select_output_file(self):
-    #Seleciona folder de saida
+    #Select output folder / Seleciona a pasta de saida
         folderTmp = QFileDialog.getExistingDirectory(self.dlg, "Select output folder ", self.folderName)
         if folderTmp != "":
             self.folderName = folderTmp
@@ -264,7 +259,7 @@ class SampleByArea:
                 return True
     
     def return_units(self):
-    #Retorna a unidade de medida da camada
+    #Returns the unit of measure of the layer / Retorna a unidade de medida da camada
     #Input data selection
         index = self.dlg.comboBox.currentIndex()
         selection = self.dlg.comboBox.itemData(index)
@@ -327,17 +322,18 @@ class SampleByArea:
             if not os.path.exists(directory):
                 os.makedirs(directory)
 
+            ### Begin to simulate in the python terminal 
             #ly = iface.activeLayer()
             #ly.name()
             #selection = ly
             #dp = ly.dataProvider()
             #lyrInput = selection
             #Nivel_de_Inspecao = 1
-
-            #Preparar saida
             #path_project = QgsProject.instance().fileName()
             #path_project = path_project[:path_project.rfind("/"):]
-            #directory = path_project + "/amostras"
+            #directory = path_project + "/samples"
+            ### End to simulate in the python terminal
+
             pth = directory
             gpkg = os.path.join(pth + "/sample_area.shp")
             filename = gpkg
@@ -351,14 +347,11 @@ class SampleByArea:
 
             # Data provider from selection 
             dp = selection.dataProvider()
-            #geometry = selection.wkbType()
             geometry = 6 #'MultiPolygon' 
             crs = dp.crs()
             encoding = dp.encoding()
             units = (QgsUnitTypes.toString(crs.mapUnits()))
             units_id = (selection.dataProvider().crs().mapUnits())
-            #grid_size = size_of_grid(size, units_id)
-            #self.dlg.label_units.setText(units)
 
             #Data source
             ds = ogr.GetDriverByName("Esri Shapefile")
@@ -369,14 +362,8 @@ class SampleByArea:
 
             # Data features from selection 
             lyrInput = selection
-            #lyrInput = QgsVectorLayer.getFeatures(selection) # substituir camada por selection OK
-            #layer = lyrInput #substituir lyrInput por "features" 
-            #features = vector.features(layer)                                    ## area temp layer
-            #features = QgsVectorLayer.getFeatures(selection)
-            #featureCount = len(selection) # substituir camada por selection - OK ## area temp layer
             
             fields = QgsFields() # utilizar na inspecao por area 
-            #fields = dp.fields()
             fields.append(QgsField("id_measure", QVariant.Int))
             fields.append(QgsField("checked", QVariant.String))
             fields.append(QgsField("status", QVariant.String))
@@ -388,8 +375,6 @@ class SampleByArea:
 
             # Sampling plans # Plano de amostragem
             Nivel_de_Inspecao = self.dlg.comboBoxLevel.currentIndex()
-            #CONSTANTE (plano de amostragem)
-            #dicSampleLength={2:[2,2,3],9:[2,3,5],16:[3,5,8],26:[5,8,13],51:[5,13,20],91:[8,20,32],151:[13,32,50],281:[20,50,80],501:[32,80,125],1201:[50,125,200],3201:[80,200,315],10001:[125,315,500],35001:[200,500,800],150001:[315,800,1250],500001:[500,1250,2000]}
             
             #Function Grid
             xmin,ymin,xmax,ymax = lyrInput.extent().toRectF().getCoords()
@@ -402,7 +387,6 @@ class SampleByArea:
             ringXrightOrigin = xmin + gridWidth
             ringYtopOrigin = ymax
             ringYbottomOrigin = ymax-gridHeight
-            #fields = [ QgsCore.QgsField("id", QtCore.QVariant.Int ) ]
 
             id=1
             for i in range(int(cols)):
@@ -416,7 +400,6 @@ class SampleByArea:
                         square.setGeometry(QgsGeometry.fromPolygonXY([points]))
                         square.setAttributes([id])
                         perc = id / (cols * rows * 100)
-                        #progress.setPercentage(perc)
                         lyrIntermediate.dataProvider().addFeatures([square])
                         lyrIntermediate.updateExtents()
                         id = id + 1
@@ -435,7 +418,7 @@ class SampleByArea:
             
             # Function select sample # Seleciona amostra
             #Input: featureCount (area ou feicoes)
-            #Output: tamanho da amostra (sample_size)
+            #Output: sample_size (tamanho da amostra)
             for i in sorted(dicSampleLength.keys(),reverse=True):
                 if featureCount >= i:
                     index1 = i
@@ -443,21 +426,11 @@ class SampleByArea:
 
             randomNum = random.sample(range(featureCount),1)[0]
             sample_size=dicSampleLength[index1][Nivel_de_Inspecao]
-
-            #isSelectedId = random.sample(range(featureCount), sample_size)
-
-            #Fim Function seleciona amostra
             
             #Systematic sampling #Amostragem sistematica
             step= lyrIntermediate.featureCount() // dicSampleLength[index1][Nivel_de_Inspecao]
             module = randomNum % step
-            #progress.setInfo("Numero aleatorio: " + str(randomNum))
-            #progress.setInfo( 'Amostra: ' + str(dicSampleLength[index1][Nivel_de_Inspecao]))
-            #progress.setInfo( 'Passo: ' + str(step))
-            #progress.setInfo( 'Sorteado: ' + str(randomNum))
 
-            # Selecting Sample Cells / Selecionando celulas da amostra
-            #progress.setInfo('Selecionando celulas da amostra...')
             listIds=range(featureCount) 
             isSelectedId = []
             x = 1
@@ -475,17 +448,8 @@ class SampleByArea:
             del file
 
             layer = QgsVectorLayer(filename, filename.split("/")[-1]+str(sample_size), "ogr")
-            #layer = QgsVectorLayer(filename, filename.split("/")[-1], "ogr")
-            #layer.setValid(True)
-            #QgsProject.instance().addMapLayer(layer)
             
             iface.addVectorLayer(filename, "", "ogr")
-            #iface.addVectorLayer(filename, filename.split("/")[-1], "ogr")
-            #iface.addVectorLayer(memoria, "", "memory")
-            #out = iface.addVectorLayer(lyrOutput, "", "ogr")
-
-            #progress.setInfo('Number of samples selected:  ' + str(len(isSelectedId)))
-            #progress.setInfo('Alex Santos and Viviane Diniz')
 
             QMessageBox.about(None, "Systematic random sampling", "Sampling units created")
 

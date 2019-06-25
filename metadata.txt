@@ -11,7 +11,7 @@ name=Sample by area
 qgisMinimumVersion=3.0
 description=This plugin draws up an area-based sampling plan based on the area of interest for quality inspection.
 The plugin is based on ISO 19157: 2013 (Spatial Data Quality) and ISO 2859 (Attribute sampling inspection procedures).
-version=0.3
+version=0.4
 author=Alex Santos
 email=alxcart@gmail.com
 
