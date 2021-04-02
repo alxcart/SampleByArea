@@ -4,9 +4,9 @@
 # This plugin elaborates the area-oriented sampling plan, 
 # it is based on the ISO 2859 series of standards. 
 #							 -------------------
-#		begin				: 2019-05-08
+#		begin				: 2021-03-21
 #		git sha				: $Format:%H$
-#		copyright			: (C) 2019 by Alex Santos
+#		copyright			: (C) 2021 by Alex Santos
 #		email				: alxcart@gmail.com
 # ***************************************************************************/
 #
