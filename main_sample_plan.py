@@ -453,10 +453,11 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
             if i in isSelectedId:
                 file.addFeature(feat)
         del file
-           
-        iface.addVectorLayer(filename, "", "ogr")
-        
-       
+
+        dir_style = os.path.dirname(__file__)
+        style = dir_style + '/sample_area_style.qml'   
+        iface.addVectorLayer(filename, "", "ogr").loadNamedStyle(style)
+               
 def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_codigo_f, mensagem, lqa, nivel_inspecao):
     if mensagem == "inspeção amostral simples":
         Ac, Re = dicAc_simples[num_aceitacao]
