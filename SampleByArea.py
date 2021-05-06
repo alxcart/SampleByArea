@@ -306,7 +306,7 @@ class SampleByArea:
 
             # Export results - file created and save
             pth = directory
-            output_sample_grade (N, n, selection, directory, features, isSelectedId, msg)
+            output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
 
             # Final msg
             if N > n:

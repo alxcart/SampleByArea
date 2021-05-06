@@ -346,7 +346,7 @@ def add_fields(provider):
     fields.append(QgsField("status", QVariant.String))
     fields.append(QgsField("tx_report", QVariant.String))
     return fields 
-
+####
 def add_fields_by_area(provider):
     fields = QgsFields() # utilizar na inspecao por area 
     #fields = provider.fields()
@@ -355,19 +355,48 @@ def add_fields_by_area(provider):
     fields.append(QgsField("status", QVariant.String))
     fields.append(QgsField("tx_report", QVariant.String))
     return fields
-    
+###    
 def sample_features(pop_size, sample_size):
     #randomNum = random.sample(range(featureCount),1)[0]
     isSelectedId = random.sample(range(pop_size), sample_size)
     return isSelectedId
 
-def output_sample(pop_size, sample_size, selection, directory): 
+def output_sample(pop_size, sample_size, selection, directory, mensagem, num_aceitacao): 
     if pop_size > sample_size:
         isSelectedId = sample_features(pop_size, sample_size)
         features, dp, provider, geometry, crs, encoding  = data_provider(selection)
         fields = add_fields(dp)
+        tipo = "C"
+        if mensagem == "inspeção amostral simples":
+            tipo = "S"
+            Ac, Re = dicAc_simples[num_aceitacao]
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+
+        if mensagem == "inspeção amostral dupla": 
+            tipo = "D"
+            Ac, Re = dicAc_dupla[num_aceitacao]
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+        if mensagem == "inspeção amostral múltipla": 
+            tipo = "M"
+            Ac, Re = dicAc_multipla[num_aceitacao]  
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"        
         
-        filename = os.path.join(directory + "/sample_" + selection.name() +".shp")
+        filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + texto_ac_re + selection.name() +".shp")
         ds = ogr.GetDriverByName("Esri Shapefile")
 
         file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
@@ -379,7 +408,7 @@ def output_sample(pop_size, sample_size, selection, directory):
            
         iface.addVectorLayer(filename, "", "ogr")
 
-def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSelectedId, mensagem): 
+def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSelectedId, mensagem, num_aceitacao): 
     if pop_size > sample_size:
         #isSelectedId = sample_features(pop_size, sample_size)
         features, dp, provider, geometry, crs, encoding  = data_provider(selection)
@@ -388,12 +417,34 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
         tipo = "C"
         if mensagem == "inspeção amostral simples":
             tipo = "S"
+            Ac, Re = dicAc_simples[num_aceitacao]
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+
         if mensagem == "inspeção amostral dupla": 
             tipo = "D"
+            Ac, Re = dicAc_dupla[num_aceitacao]
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
         if mensagem == "inspeção amostral múltipla": 
-            tipo = "M"          
+            tipo = "M"
+            Ac, Re = dicAc_multipla[num_aceitacao]  
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"
+            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
+                texto_ac_re = "_NA_"           
         
-        filename = os.path.join(directory + "/sample_area_" + str(sample_size) + tipo +".shp")
+        filename = os.path.join(directory + "/sample_area_" + str(sample_size)  + tipo + texto_ac_re + ".shp")
         ds = ogr.GetDriverByName("Esri Shapefile")
 
         file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
