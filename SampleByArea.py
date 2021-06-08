@@ -62,6 +62,7 @@ class SampleByArea:
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
+
         # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
@@ -309,6 +310,7 @@ class SampleByArea:
             output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
 
             # Final msg
+            #dir_style = os.path.dirname(__file__)
             if N > n:
                 msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
         
