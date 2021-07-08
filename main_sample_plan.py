@@ -418,7 +418,7 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
         if mensagem == "inspeção amostral simples":
             tipo = "S"
             Ac, Re = dicAc_simples[num_aceitacao]
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) #+ "_" 
 
             if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
                 texto_ac_re = "_NA_"
@@ -429,7 +429,7 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
         if mensagem == "inspeção amostral dupla": 
             tipo = "D"
             Ac, Re = dicAc_dupla[num_aceitacao]
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) #+ "_" 
             if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
                 texto_ac_re = "_NA_"
 
@@ -438,13 +438,13 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
         if mensagem == "inspeção amostral múltipla": 
             tipo = "M"
             Ac, Re = dicAc_multipla[num_aceitacao]  
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
+            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) # + "_" 
             if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
                 texto_ac_re = "_NA_"
             if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
                 texto_ac_re = "_NA_"           
-        
-        filename = os.path.join(directory + "/sample_area_" + str(sample_size)  + tipo + texto_ac_re + ".shp")
+        texto_id_file = (str(sample_size)  + tipo + texto_ac_re)
+        filename = os.path.join(directory + "/sample_area_" + texto_id_file + ".shp")
         ds = ogr.GetDriverByName("Esri Shapefile")
 
         file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
@@ -457,6 +457,7 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
         dir_style = os.path.dirname(__file__)
         style = dir_style + '/sample_area_style.qml'   
         iface.addVectorLayer(filename, "", "ogr").loadNamedStyle(style)
+        return texto_id_file
                
 def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_codigo_f, mensagem, lqa, nivel_inspecao):
     if mensagem == "inspeção amostral simples":
@@ -474,16 +475,40 @@ def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_
     #     #print(Ac, Re, msg)
     #     "\n Ac = " + str(Ac) +
     #     "\n Re = " + str(Re) +
-    #"\n Ac = " + str(num_aceitacao) +     
-    QMessageBox.about(None, "Sample by area", str(mensagem) + 
-    "\n nivel de inspeção  " + str(id_nivel_inspecao(nivel_inspecao)) +
-    "\n LQA = " + str(id_lqa(lqa)) +
-    "\n N = " + str(pop_size)+ 
-    "\n n = " + str(sample_size) +
-    "\n Ac = " + str(Ac) +
-    "\n Re = " + str(Re) +
-    "\n Letra código (inicial) = " + str(letra_codigo_i) +
-    "\n Letra codigo (final) = " + str(letra_codigo_i))
+    #"\n Ac = " + str(num_aceitacao) + 
+    
+    # Escrever aquivo texto
+    texto = ("----- Plano de amostragem ----- \n" + str(mensagem).capitalize() + 
+    "\nNivel de inspeção  " + str(id_nivel_inspecao(nivel_inspecao)) +
+    "\nLQA = " + str(id_lqa(lqa)) +
+    "\nN = " + str(pop_size)+ 
+    "\nn = " + str(sample_size) +
+    "\nAc = " + str(Ac) +
+    "\nRe = " + str(Re) +
+    "\nLetra código (inicial) = " + str(letra_codigo_i) +
+    "\nLetra codigo (final) = " + str(letra_codigo_i) + 
+    "\n ------------------------------------"
+    )
+    
+    texto_resultado = ("\n ---- Resultado ----" +
+    "\nAprovados = " + 
+    "\nReprovados = " +
+    "\nNível de conformidade*** = " +
+    "\n ------------------------------------ " +
+    "\nNota\n \n \n" +
+    "\n ------------------------------------ " +
+    "\n*** O nível de conformidade pode ser aprovado, reprovado ou inclusivo" +
+    "\nPor exemplo: Aprovado, segundo o plano de amostragem simples e o LQA de 4% " +
+    "\nPor exemplo: Reprovado, segundo o plano de amostragem múltipla e o LQA de 2,5%" + 
+    "\nPor exemplo: Inclusivo, segundo o plano de amostragem dupla e o LQA de 10%" +
+    "\nPor exemplo: Inclusivo, segundo o plano de amostragem múltipla e o LQA de 6,5%" +
+    "\n ------------------------------------ "
+
+            )
+    QMessageBox.about(None, "Sample by area", texto)
+
+    return texto, texto_resultado
+
     
 def msg_complete(pop_size, sample_size, mensagem):
     QMessageBox.about(None, "Sample by area", str(mensagem) + 

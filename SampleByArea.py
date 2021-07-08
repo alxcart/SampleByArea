@@ -307,12 +307,16 @@ class SampleByArea:
 
             # Export results - file created and save
             pth = directory
-            output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
+            codigo_arquivo = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
 
             # Final msg
             #dir_style = os.path.dirname(__file__)
+
             if N > n:
-                msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
-        
+                sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
+                f = open (directory + "/summary" + codigo_arquivo + ".txt", "w+")
+                f.write(sumario + texto_resultado)
+                f.close()
+                           
             if N <= n:
                 msg_complete( N, n, msg)
