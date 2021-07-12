@@ -1,6 +1,7 @@
 # functions e constants plugins
 # executable in Terminal Python QGIS 
 from qgis.core import *
+#from qgis.core import Qgis
 # #### Importar biblioteca "random"
 from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
 from qgis.core import *
@@ -445,20 +446,21 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
                 texto_ac_re = "_NA_"           
         texto_id_file = (str(sample_size)  + tipo + texto_ac_re)
         filename = os.path.join(directory + "/sample_area_" + texto_id_file + ".shp")
+        #filename_gpkg = os.path.join(directory + "/sample_area_" + texto_id_file + ".gpkg")
         ds = ogr.GetDriverByName("Esri Shapefile")
-
+        # Testar a existência do arquivo shapefile
         file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
+        #file_gpkg = QgsVectorFileWriter(filename_gpkg, encoding, crs, "GPKG")       
 
         for i, feat in enumerate(grade):
             if i in isSelectedId:
                 file.addFeature(feat)
         del file
+        
 
-        dir_style = os.path.dirname(__file__)
-        style = dir_style + '/sample_area_style.qml'   
-        iface.addVectorLayer(filename, "", "ogr").loadNamedStyle(style)
-        return texto_id_file
-               
+
+        return texto_id_file, filename
+              
 def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_codigo_f, mensagem, lqa, nivel_inspecao):
     if mensagem == "inspeção amostral simples":
         Ac, Re = dicAc_simples[num_aceitacao]
@@ -478,7 +480,7 @@ def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_
     #"\n Ac = " + str(num_aceitacao) + 
     
     # Escrever aquivo texto
-    texto = ("----- Plano de amostragem ----- \n" + str(mensagem).capitalize() + 
+    texto = ("-----  Plano de amostragem -----\n" + str(mensagem).capitalize() + 
     "\nNivel de inspeção  " + str(id_nivel_inspecao(nivel_inspecao)) +
     "\nLQA = " + str(id_lqa(lqa)) +
     "\nN = " + str(pop_size)+ 
@@ -486,16 +488,15 @@ def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_
     "\nAc = " + str(Ac) +
     "\nRe = " + str(Re) +
     "\nLetra código (inicial) = " + str(letra_codigo_i) +
-    "\nLetra codigo (final) = " + str(letra_codigo_i) + 
-    "\n ------------------------------------"
+    "\nLetra codigo (final) = " + str(letra_codigo_i) #+ 
+    #"\n ------------------------------------"
     )
-    
-    texto_resultado = ("\n ---- Resultado ----" +
+    texto_resultado = ("\n----- Resultado -----" +
     "\nAprovados = " + 
     "\nReprovados = " +
     "\nNível de conformidade*** = " +
     "\n ------------------------------------ " +
-    "\nNota\n \n \n" +
+    "\nNota:\n \n \n" +
     "\n ------------------------------------ " +
     "\n*** O nível de conformidade pode ser aprovado, reprovado ou inclusivo" +
     "\nPor exemplo: Aprovado, segundo o plano de amostragem simples e o LQA de 4% " +
@@ -509,7 +510,64 @@ def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_
 
     return texto, texto_resultado
 
-    
+def metadado(abstract_1o, abstract_2o, dimensao_grade, aoi, nome_arquivo):
+    qmd_metadado = ("<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>" +
+    "\n<qgis version = '" + str(Qgis.QGIS_VERSION) + "'>" 
+    "\n<identifier>" + str(nome_arquivo) + "</identifier>" + # colocar nome do shapefile
+    "\n  <parentidentifier>Plano de amostragem</parentidentifier>" +
+    "\n<language>português</language>" +
+    "\n<type>dataset</type>" +
+    "\n<title>Plano de amostragem por área</title>" +
+    "\n<abstract>" +
+    abstract_1o +
+    "\n" + 
+    "\nCamada selecionada (AOI): " + str(aoi) + 
+    "\nTamanho área de inspeção: " + str(float(dimensao_grade)*float(dimensao_grade)) + "km2" + 
+    "\nVersão do QGIS: " + str(Qgis.QGIS_VERSION) + 
+    "\n" + 
+    abstract_2o +
+    "\n" +
+    "\n</abstract>" +
+        "\n  <contact>" +
+    "\n    <name></name>" +
+    "\n    <organization></organization>" +
+    "\n    <position></position>" +
+    "\n    <voice></voice>" +
+    "\n    <fax></fax>" +
+    "\n    <email></email>" +
+    "\n    <role></role>" +
+    "\n  </contact>" +
+    "\n  <links/>" +
+    "\n  <fees></fees>" +
+    "\n  <encoding></encoding>" +
+    "\n  <crs>" +
+    "\n    <spatialrefsys>" +
+    "\n      <wkt></wkt>" +
+    "\n      <proj4></proj4>" +
+    "\n      <srsid></srsid>" +
+    "\n      <srid></srid>" +
+    "\n      <authid></authid>" +
+    "\n      <description></description>" +
+    "\n      <projectionacronym></projectionacronym>" +
+    "\n      <ellipsoidacronym></ellipsoidacronym>" +
+    "\n      <geographicflag></geographicflag>" +
+    "\n    </spatialrefsys>" +
+    "\n  </crs>" +
+    "\n  <extent>" +
+    "\n    <spatial/>" +
+    "\n    <temporal>" +
+    "\n      <period>" +
+    "\n        <start></start>" +
+    "\n        <end></end>" +
+    "\n      </period>" +
+    "\n    </temporal>" +
+    "\n  </extent>" +
+    "\n</qgis>"
+    )
+    return qmd_metadado
+
+
+
 def msg_complete(pop_size, sample_size, mensagem):
     QMessageBox.about(None, "Sample by area", str(mensagem) + 
     "\n N = " + str(pop_size)+ 

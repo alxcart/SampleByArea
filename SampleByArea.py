@@ -307,16 +307,32 @@ class SampleByArea:
 
             # Export results - file created and save
             pth = directory
-            codigo_arquivo = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
-
+            codigo_arquivo, nome_arquivo = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
+            
             # Final msg
             #dir_style = os.path.dirname(__file__)
 
             if N > n:
                 sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
-                f = open (directory + "/summary" + codigo_arquivo + ".txt", "w+")
-                f.write(sumario + texto_resultado)
-                f.close()
+                texto_metadado = metadado(sumario, texto_resultado, size, selection.name(), nome_arquivo)
+                dir_style = os.path.dirname(__file__)
+                style = dir_style + '/sample_area_style.qml' 
+                layer = QgsVectorLayer(nome_arquivo, "ogr")
+                if layer.isValid() == True:
+                    f = open (directory + "/sample_area_" + codigo_arquivo + ".qmd", "w+")
+                    f.write(texto_metadado)
+                    f.close()
+                    layer_sample = iface.addVectorLayer(nome_arquivo, "", "ogr")
+                    layer_sample.loadNamedStyle(style)
+                if layer.isValid() == False:
+                    QMessageBox.warning(None, "Sample by area", "O arquivo " + 
+                                        codigo_arquivo + " já existe na pasta.\n" +
+                                        "\n   Por favor, alterar os parâmetros do plano de amostragem" +
+                                        "\nou selecionar uma nova pasta.\n"
+                                        )
+
+
+                # carregar metadado neste momento. 
                            
             if N <= n:
                 msg_complete( N, n, msg)
