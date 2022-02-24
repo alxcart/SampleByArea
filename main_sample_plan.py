@@ -10,7 +10,7 @@ import os.path
 from qgis.utils import *
 import random
 from osgeo import ogr
-from .constants import * # constants of project
+#from .constants import * # constants of project
 from math import ceil # size of cell - sample by area
 
 """
@@ -107,6 +107,80 @@ TAB_LQA = {2:["A", 2,0,0,"down","down","down","down","down","down",0,"down","dow
                 800:["P", 800,500,200,7,10,14,21,"up","up","up","up","up","up"], 
                 1250:["Q", 1250,800,315,10,14,21,"up","up","up","up","up","up","up"], 
                 2000:["R", 2000,1250,500,14,21,"up","up","up","up","up","up","up","up"]}
+
+dicAc_dupla = {0:["Utilizar plano de amostragem simples indicado acima", "Utilizar plano de amostragem simples indicado acima"], 
+               1:[0, 2], 
+               2:[0, 3], 
+               3:[1, 4], 
+               5:[2, 5], 
+               7:[3, 7], 
+               8:[3, 7], 
+               10:[5, 9], 
+               12:[6, 10], 
+               14:[7, 11], 
+               18:[9, 14],
+               21:[11, 16]}
+dicAc_simples = {0:[0, 1], 
+                 1:[1, 2], 
+                 2:[2, 3], 
+                 3:[3, 4], 
+                 5:[5, 6], 
+                 7:[7, 8], 
+                 8:[8, 9], 
+                 10:[10, 11], 
+                 12:[12, 13], 
+                 14:[14, 15], 
+                 18:[18, 19],
+                 21:[21, 22]}
+dicAc_multipla = {0:["Utilizar plano de amostragem simples indicado acima","Utilizar plano de amostragem simples indicado acima"], 
+                  1: ["", 2], 
+                  2: ["Aceitação não permitida com o tamanho de amostra indicado", 2], 3: ["Aceitação não permitida com o tamanho de amostra indicado", 3], 
+                  5: ["Aceitação não permitida com o tamanho de amostra indicado", 4], 
+                  7: [0, 4], 
+                  8: [0, 4], 
+                  10: [0, 5], 
+                  12: [0, 6], 
+                  14: [1, 7], 
+                  18: [1, 8],
+                  21: [2, 9]}
+#############################################################################################
+# Map Units
+#Meters                  = 0
+#Feet                    = 1
+#Degrees                 = 2
+#UnknownUnit             = 3
+#DecimalDegrees          = 4
+#DegreesMinutesSeconds   = 5
+#DegreesDecimalMinutes   = 6
+#NauticalMiles           = 7
+
+uMeters                 = QgsUnitTypes.DistanceMeters 	        #Meters.
+uKilometers             = QgsUnitTypes.DistanceKilometers 	    #Kilometers.
+uImperialFeet           = QgsUnitTypes.DistanceFeet 	        #Imperial feet.
+uNauticalMiles          = QgsUnitTypes.DistanceNauticalMiles 	#Nautical miles.
+uImperialYards          = QgsUnitTypes.DistanceYards 	        #Imperial yards.
+uTerrestrialMiles       = QgsUnitTypes.DistanceMiles 	        #Terrestrial miles.
+uDegrees                = QgsUnitTypes.DistanceDegrees 	        #Degrees, for planar geographic CRS distance measurements.
+uCentimeters            = QgsUnitTypes.DistanceCentimeters 	    #Centimeters.
+uMillimeters            = QgsUnitTypes.DistanceMillimeters 	    #Millimeters.
+uUnknownDistanceUnit    = QgsUnitTypes.DistanceUnknownUnit 	    #Unknown distance unit.
+
+#Convert km to
+#Meter
+m = 1000
+
+#Feet
+ft = 3280.8398950131
+
+#Degrees
+dg = 1/111.320
+
+#NauticalMiles
+nm = 0.54
+
+#UnknownUnit
+uk = 1
+#######################################################################################
 
 # ### Função tamanho da amostra (n)
 # Funcao para encontrar a letra codigo a partir do N e do nivel de inspecao
@@ -506,7 +580,7 @@ def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_
     "\n ------------------------------------ "
 
             )
-    QMessageBox.about(None, "Sample by area", texto)
+    #QMessageBox.about(None, "Sample by area", texto)
 
     return texto, texto_resultado
 
