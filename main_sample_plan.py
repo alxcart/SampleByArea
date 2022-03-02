@@ -299,14 +299,33 @@ def n_final(n, tipo_inspecao):
     nfinal = n
     return nfinal, msg
 
-# ### Função: Seleciona amostra 
-
+#### Randow sampling / Função: Seleciona amostra 
+#by_area_feature
 def select_sample (N, n):
     #n = sample_plan(N)[0]
     randomNum = random.sample(range(N),1)[0]
     isSelectedId = random.sample(range(N), n)
 
     return randomNum, isSelectedId
+
+def sistematic_sample(N, n):
+#Systematic sampling #Amostragem sistematica
+    randomNum = random.sample(range(N),1)[0]
+
+    step= N // n
+    module = randomNum % step
+
+    listIds=range(N) 
+    isSelectedId = []
+    x = 1
+    for i in listIds:
+        if x <= n: 
+            if (i) % step == module:
+                isSelectedId.append(i)
+                x += 1   
+    return randomNum, isSelectedId
+## Incluir o layer temporário/intermediário para permitir a execução desta função
+## Será necessário mais variáveis 
 
 """
 # ### Função: Plano de amostragem
@@ -470,7 +489,7 @@ def output_sample(pop_size, sample_size, selection, directory, mensagem, num_ace
                 texto_ac_re = "_NA_"
             if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
                 texto_ac_re = "_NA_"        
-        
+        texto_id_file = (str(sample_size)  + tipo + texto_ac_re)
         filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + texto_ac_re + selection.name() +".shp")
         ds = ogr.GetDriverByName("Esri Shapefile")
 
@@ -481,7 +500,8 @@ def output_sample(pop_size, sample_size, selection, directory, mensagem, num_ace
                 file.addFeature(feat)
         del file
            
-        iface.addVectorLayer(filename, "", "ogr")
+        # iface.addVectorLayer(filename, "", "ogr")
+        return texto_id_file, filename
 
 def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSelectedId, mensagem, num_aceitacao): 
     if pop_size > sample_size:
@@ -523,6 +543,9 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
         #filename_gpkg = os.path.join(directory + "/sample_area_" + texto_id_file + ".gpkg")
         ds = ogr.GetDriverByName("Esri Shapefile")
         # Testar a existência do arquivo shapefile
+        # Se valido não escrever novo arquivo
+        # Se invalido inexistente escrever arquivo
+        
         file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
         #file_gpkg = QgsVectorFileWriter(filename_gpkg, encoding, crs, "GPKG")       
 
@@ -531,7 +554,6 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
                 file.addFeature(feat)
         del file
         
-
 
         return texto_id_file, filename
               
@@ -596,6 +618,7 @@ def metadado(abstract_1o, abstract_2o, dimensao_grade, aoi, nome_arquivo):
     abstract_1o +
     "\n" + 
     "\nCamada selecionada (AOI): " + str(aoi) + 
+    #if dimensao_grade > 0:
     "\nTamanho área de inspeção: " + str(float(dimensao_grade)*float(dimensao_grade)) + "km2" + 
     "\nVersão do QGIS: " + str(Qgis.QGIS_VERSION) + 
     "\n" + 
@@ -766,6 +789,35 @@ def grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size):
     sample_size = n
     ############################            
     #Systematic sampling #Amostragem sistematica
+    randomNum, isSelectedId = sistematic_sample(N, n)
+    
+    return isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg
+
+'''    
+    randomNum = random.sample(range(N),1)[0]
+    step= N // sample_size
+    module = randomNum % step
+
+    listIds=range(featureCount) 
+    isSelectedId = []
+    x = 1
+    for i in listIds:
+        if x <= sample_size: 
+            if (i) % step == module:
+                isSelectedId.append(i)
+                x += 1   
+'''
+
+
+ ##########################################################   
+
+'''
+    sistematic_sample(N,n)
+
+    N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (featureCount, nivel_inspecao, lqa + 4 , tipo_inspecao)
+    sample_size = n
+    ############################            
+    #Systematic sampling #Amostragem sistematica
     randomNum = random.sample(range(N),1)[0]
     step= N // sample_size
     module = randomNum % step
@@ -782,7 +834,7 @@ def grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size):
     return isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg
 
  ##########################################################   
-
+'''
 
 """
 ### Begin simulation to python terminal

@@ -135,8 +135,8 @@
   <widget class="QLabel" name="tx_subtitle">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>340</y>
+     <x>17</x>
+     <y>350</y>
      <width>441</width>
      <height>16</height>
     </rect>
@@ -145,14 +145,16 @@
     <font>
      <family>Arial</family>
      <pointsize>8</pointsize>
-     <italic>false</italic>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
     </font>
    </property>
    <property name="styleSheet">
     <string notr="true">color: rgb(0, 85, 255);</string>
    </property>
    <property name="text">
-    <string>Based on ISO 2859-Sampling Procedures For Inspection By Attributes Package</string>
+    <string>ISO 2859-Sampling Procedures For Inspection By Attributes Package</string>
    </property>
   </widget>
   <widget class="QLabel" name="tx_level">
@@ -368,8 +370,8 @@
   <widget class="QLabel" name="tx_subtitle_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>320</y>
+     <x>16</x>
+     <y>330</y>
      <width>441</width>
      <height>16</height>
     </rect>
@@ -378,14 +380,16 @@
     <font>
      <family>Arial</family>
      <pointsize>8</pointsize>
-     <italic>false</italic>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
     </font>
    </property>
    <property name="styleSheet">
     <string notr="true">color: rgb(0, 85, 255);</string>
    </property>
    <property name="text">
-    <string>Based on ISO 19157 - Data Quality - Geographic Information </string>
+    <string> ISO 19157:2013 - Data Quality - Geographic Information </string>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
@@ -630,6 +634,31 @@
    </property>
    <property name="text">
     <string>Limite de Qualidade Aceitável (LQA)</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="tx_subtitle_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>310</y>
+     <width>441</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>8</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(0, 85, 255);</string>
+   </property>
+   <property name="text">
+    <string>Based on:</string>
    </property>
   </widget>
  </widget>

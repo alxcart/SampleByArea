@@ -31,7 +31,11 @@ import os.path
 from osgeo import ogr
 import random
 
+#from .constants import * # constants of project
 from .main_sample_plan import * # functions of project
+#import sys # usar no desenvolvimento #
+#sys.path.append(os.path.abspath(r"C:/Users/Admin/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/SampleByArea/"))
+#from main_sample_plan import *
 
 # based on the clip_multiple_layers plugin
 import processing, os, subprocess, time
@@ -301,8 +305,13 @@ class SampleByArea:
             lqa = self.dlg.comboBoxLQA.currentIndex()
 
             # Grade function - Sample by area 
-
+            # Diferença isSelectedId, features (grade)
             isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
+            
+            #features, featureCount = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
+            #N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (featureCount, nivel_inspecao, lqa + 4 , tipo_inspecao)
+            # grade = features 
+            #randomNum, isSelectedId = sistematic_sample(N,n)
 
             # Export results - file created and save
             pth = directory
@@ -333,8 +342,8 @@ class SampleByArea:
                                         "\nou selecionar uma nova pasta.\n"
                                         )
 
-
                 # carregar metadado neste momento. 
+                # checar existencia do arquivo antes de escrever. Atualmente, o anterior é perdido. 
                            
             if N <= n:
                 msg_complete( N, n, msg)
