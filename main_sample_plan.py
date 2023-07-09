@@ -436,7 +436,7 @@ def add_fields(provider):
     #fields = QgsFields() # utilizar na inspecao por area 
     fields = provider.fields()
     fields.append(QgsField("id_measure", QVariant.Int))
-    fields.append(QgsField("checked", QVariant.String))
+    #fields.append(QgsField("checked", QVariant.String))
     fields.append(QgsField("status", QVariant.String))
     fields.append(QgsField("tx_report", QVariant.String))
     return fields 
@@ -445,7 +445,7 @@ def add_fields_by_area(provider):
     fields = QgsFields() # utilizar na inspecao por area 
     #fields = provider.fields()
     fields.append(QgsField("id_measure", QVariant.Int))
-    fields.append(QgsField("checked", QVariant.String))
+    #fields.append(QgsField("checked", QVariant.String))
     fields.append(QgsField("status", QVariant.String))
     fields.append(QgsField("tx_report", QVariant.String))
     return fields
@@ -489,11 +489,15 @@ def output_sample(pop_size, sample_size, selection, directory, mensagem, num_ace
                 texto_ac_re = "_NA_"
             if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
                 texto_ac_re = "_NA_"        
-        texto_id_file = (str(sample_size)  + tipo + texto_ac_re)
-        filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + texto_ac_re + selection.name() +".shp")
-        ds = ogr.GetDriverByName("Esri Shapefile")
+        texto_id_file = (str(sample_size)  + tipo)
+        #texto_id_file = (str(sample_size)  + tipo + texto_ac_re)
+        #filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + texto_ac_re + selection.name() +".shp")
+        filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + selection.name() + str(".gpkg"))
+        #ds = ogr.GetDriverByName("Esri Shapefile")
 
-        file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
+        #file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
+        # Criar uma camada virtual vazia
+        file = QgsVectorLayer("MultiPolygoncrs=" + crs, 'sample_area_virtual', 'memory')
 
         for i, feat in enumerate(features):
             if i in isSelectedId:
@@ -508,7 +512,7 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
         #isSelectedId = sample_features(pop_size, sample_size)
         features, dp, provider, geometry, crs, encoding  = data_provider(selection)
         geometry = 6 #'MultiPolygon' 
-        fields = add_fields_by_area(dp)
+        #fields = add_fields_by_area(dp)
         tipo = "C"
         if mensagem == "inspeção amostral simples":
             tipo = "S"
@@ -538,24 +542,46 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
                 texto_ac_re = "_NA_"
             if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
                 texto_ac_re = "_NA_"           
-        texto_id_file = (str(sample_size)  + tipo + texto_ac_re)
-        filename = os.path.join(directory + "/sample_area_" + texto_id_file + ".shp")
+        tx_data = data_sample()
+        texto_id_file = (str(sample_size)  + tipo) # + "_" + str(tx_data))
+        #filename = os.path.join(directory + "/sample_area_" + texto_id_file + ".shp")
+        filename = os.path.join(directory + "/sample_area_" + texto_id_file + "_" + str(tx_data) + str(".gpkg"))
+        #filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + selection.name() + str(".gpkg"))
+
         #filename_gpkg = os.path.join(directory + "/sample_area_" + texto_id_file + ".gpkg")
-        ds = ogr.GetDriverByName("Esri Shapefile")
+        ### ds = ogr.GetDriverByName("Esri Shapefile")
         # Testar a existência do arquivo shapefile
         # Se valido não escrever novo arquivo
         # Se invalido inexistente escrever arquivo
         
-        file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
-        #file_gpkg = QgsVectorFileWriter(filename_gpkg, encoding, crs, "GPKG")       
+        #file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
+
+        #file_gpkg = QgsVectorFileWriter(filename_gpkg, encoding, crs, "GPKG")  
+        # Criar uma camada virtual vazia
+        
+   ############################ CRIAR OUTRA GRADE VIRTUAL AQUI
+        #file = QgsVectorLayer("MultiPolygoncrs=" + crs, 'sample_area_virtual', 'memory')
+       #lyrIntermediate=QgsVectorLayer("MultiPolygon"+"?crs="+str(crs.authid()),"","memory")
+        lyrIntermediate=QgsVectorLayer("MultiPolygon"+"?crs="+str(crs.authid()),"","memory")
+        lyrIntermediate.setCrs(crs)
+        file = lyrIntermediate.dataProvider()
+        fields = add_fields_by_area(file)
+        lyrIntermediate.dataProvider().addAttributes(fields)
+        lyrIntermediate.updateFields()        
+        
+        #fields = add_fields_by_area(file)
+        #file.addAttributes(fields)
+        #file.updateFields()
+
+        #file = QgsVectorFileWriter(lyrIntermediate, encoding, fields, geometry, crs, "memory")
+        # ly = camada_virtual_amostra
+        #save_gpkg(ly, filename)     
 
         for i, feat in enumerate(grade):
             if i in isSelectedId:
                 file.addFeature(feat)
-        del file
-        
-
-        return texto_id_file, filename
+        #del file
+        return texto_id_file, filename, lyrIntermediate
               
 def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_codigo_f, mensagem, lqa, nivel_inspecao):
     if mensagem == "inspeção amostral simples":
@@ -734,13 +760,13 @@ def grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size):
             
     fields = QgsFields() # utilizar na inspecao por area 
     fields.append(QgsField("id_measure", QVariant.Int))
-    fields.append(QgsField("checked", QVariant.String))
+    #fields.append(QgsField("checked", QVariant.String))
     fields.append(QgsField("status", QVariant.String))
 
     # #File created
     # file = QgsVectorFileWriter(filename, encoding, fields, geometry, crs, ds.name)
     #Temporary layer
-    lyrIntermediate=QgsVectorLayer("Polygon"+"?crs="+str(crs.authid()),"temporary_polygons","memory")
+    lyrIntermediate=QgsVectorLayer("MultiPolygon"+"?crs="+str(crs.authid()),"temporary_polygons","memory")
     lyrIntermediate.setCrs(lyrInput.crs())
 
     # Sampling plans # Plano de amostragem
@@ -793,98 +819,59 @@ def grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size):
     
     return isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg
 
-'''    
-    randomNum = random.sample(range(N),1)[0]
-    step= N // sample_size
-    module = randomNum % step
+def get_layer():
+    # get layer list
+    lyrs = iface.layerTreeView().selectedLayers() # apenas o layer selecionado
+    # select layer
+    lyr_selected = lyrs[0]
+    return lyr_selected
 
-    listIds=range(featureCount) 
-    isSelectedId = []
-    x = 1
-    for i in listIds:
-        if x <= sample_size: 
-            if (i) % step == module:
-                isSelectedId.append(i)
-                x += 1   
-'''
+def data_sample():
+    import datetime
+    from datetime import date, datetime
+    # data geopakage
+    data = datetime.now()
+    ano = data.year
+    mes = data.month
+    dia = data.day
+    hora = data.hour
+    minuto = data.minute
+    segundo = data.second
+    tx_data = str(ano)+str(mes)+str(dia)+str(hora)+str(minuto)+str(segundo)
+    return tx_data
+    
 
+def save_gpkg(camada, filename, texto_id_file ):
+    options = QgsVectorFileWriter.SaveVectorOptions()
+    options.driverName = "GPKG"
+    classe_ocorrencia = camada_virtual()
+    class_notes = classe_ocorrencia
+    options.layerName = "sample_area" + "_" +  str(texto_id_file)
+    #options.layerName = camada.name()
+    options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteFile
+    options.fileEncoding = "utf-8"
+    #options.onlySelected = True
+    QgsVectorFileWriter.writeAsVectorFormat(camada, filename, options)
+    #QgsVectorFileWriter.writeAsVectorFormat(class_notes, filename, options)
+    options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
+    options.layerName = class_notes.name()    
+    QgsVectorFileWriter.writeAsVectorFormat(class_notes, filename, options)
+    #QgsVectorFileWriter.writeAsVectorFormat(camada, filename, options)
+    
 
- ##########################################################   
-
-'''
-    sistematic_sample(N,n)
-
-    N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (featureCount, nivel_inspecao, lqa + 4 , tipo_inspecao)
-    sample_size = n
-    ############################            
-    #Systematic sampling #Amostragem sistematica
-    randomNum = random.sample(range(N),1)[0]
-    step= N // sample_size
-    module = randomNum % step
-
-    listIds=range(featureCount) 
-    isSelectedId = []
-    x = 1
-    for i in listIds:
-        if x <= sample_size: 
-            if (i) % step == module:
-                isSelectedId.append(i)
-                x += 1   
-
-    return isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg
-
- ##########################################################   
-'''
-
-"""
-### Begin simulation to python terminal
-##Input data selection 
-selected_layer = iface.activeLayer()
-selected_layer.name()
-selection = selected_layer
-## Sampling plan / Plano de amostragem
-nivel_inspecao = 1
-tipo_inspecao = 1
-lqa = 1
-##########
-#Directory
-#####################
-path_project = QgsProject.instance().fileName()
-path_project = path_project[:path_project.rfind("/"):]
-directory = path_project + "/sample_features"
-
-pth = directory
-#####################
-
-###############
-# Structure data
-################
-features, dp, provider, geometry, crs, encoding = data_provider(selection)
-###############
-###############
-# Output #
-N = features_selection(selection)
-N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao)
-print (N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg)
-print (id_lqa(lqa), id_nivel_inspecao(nivel_inspecao), id_tipo_inspecao(tipo_inspecao))
-
-##########
-
-N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao)
-
-output_sample(N, n, selection, pth)
-
-###########
-Mensagem
-###########
-pop_size = N 
-sample_size = n 
-if pop_size > sample_size:
-    msg_sample_plan( pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
-        
-if pop_size <= sample_size:
-    msg_complete( pop_size, sample_size, msg)
-
-############
-# End simulation to python terminal   
-"""
+def camada_virtual():
+    # Criar uma definição de campos vazios
+    fields = QgsFields()
+    #fields.append(QgsField('id', QVariant.int))
+    fields.append(QgsField('id_measure', QVariant.String))
+    fields.append(QgsField('tx_report', QVariant.String))
+    fields.append(QgsField('var_1', QVariant.String))
+    fields.append(QgsField('var_2', QVariant.String))
+    
+    # Criar uma camada virtual vazia
+    #virtual_layer = QgsVectorLayer('Point?crs=EPSG:4674&field=id:integer', 'inspecao_p', 'memory')
+    virtual_layer = QgsVectorLayer('Point?crs=EPSG:4674', 'inspecao_p', 'memory')
+    virtual_layer.dataProvider().addAttributes(fields)
+    virtual_layer.updateFields()
+    camada = virtual_layer
+    return camada
