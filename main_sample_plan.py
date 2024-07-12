@@ -1,17 +1,15 @@
-# functions e constants plugins
-# executable in Terminal Python QGIS 
-from qgis.core import *
-#from qgis.core import Qgis
-# #### Importar biblioteca "random"
-from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
-from qgis.core import *
-from qgis.PyQt.QtCore import *
-import os.path 
-from qgis.utils import *
-import random
-from osgeo import ogr
+# Functions e constants plugins
+# Executable in Terminal Python QGIS 
+# Importar biblioteca "random"
 #from .constants import * # constants of project
+from qgis.core import *
+from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
+from qgis.PyQt.QtCore import *
+from qgis.utils import *
+from osgeo import ogr
 from math import ceil # size of cell - sample by area
+import random
+import os.path 
 
 """
 # Sampling plan / Plano de amostragem
@@ -19,9 +17,8 @@ from math import ceil # size of cell - sample by area
 #dicSampleLength={2:[2,2,3],9:[2,3,5],16:[3,5,8],26:[5,8,13],51:[5,13,20],91:[8,20,32],151:[13,32,50],281:[20,50,80],501:[32,80,125],1201:[50,125,200],3201:[80,200,315],10001:[125,315,500],35001:[200,500,800],150001:[315,800,1250],500001:[500,1250,2000]}
 # coding: utf-8
 # # Plano de amostragem
-# ## Objetivo
-# Permitir a elaboração do plano de amostragem simples, dupla ou múltipla para a realização das inspeções de qualidade, por orientada por feição ou por área, em ambiente QGIS. 
-# ### ESCOPO
+# ## Objetivo: permitir a elaboração do plano de amostragem simples, dupla ou múltipla para a realização das inspeções de qualidade, por orientada por feição ou por área, em ambiente QGIS. 
+# ## Escopo: 
 # - 1o letra código: depende do tamanho da população (N) e do nível de inspeção (I, II ou III)
 # - 2o tamanho da amostra (n): 
 #     - depende do tamanho da população (N)
@@ -36,6 +33,7 @@ from math import ceil # size of cell - sample by area
 # - informar o plano de amostragem escolhido.   
 #### Tratar exceções
 # Quando o tamanho da população for igual a 0 ou 1
+# - Quando camada é vazia (pendente)
 # - N_min: min_1 [1,0,0]
 # - N_zero: min_1 [1,0,0]
 # - N_big: max_S [800, 1250, 3150] (#acima de 500001)
@@ -47,6 +45,7 @@ from math import ceil # size of cell - sample by area
 # ## DESENVOLVIMENTO (Python)
 # #### Constantes do plugin
 # ##### Tabela 1 - Letra código com base no tamanho da populacao (N)
+# A(2) B(3) C(5) D(8) E(13) F(20) G(32) H(50) J(80) K(125) L(200) M(315) N(500) P(800) Q(1250) R(2000)
 """
 dicSampleLength={2:[2,2,3],
                  9:[2,3,5],
@@ -750,14 +749,14 @@ def grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size):
     ############################
     #Data source
     ds = ogr.GetDriverByName("Esri Shapefile")
-            
+
     # Function size of grid
     grid = size_of_grid(size, units_id)
     grid_size = float(grid)
 
     # Data features from selection 
     lyrInput = selection
-            
+      
     fields = QgsFields() # utilizar na inspecao por area 
     fields.append(QgsField("id_measure", QVariant.Int))
     #fields.append(QgsField("checked", QVariant.String))
@@ -858,15 +857,17 @@ def save_gpkg(camada, filename, texto_id_file ):
     QgsVectorFileWriter.writeAsVectorFormat(class_notes, filename, options)
     #QgsVectorFileWriter.writeAsVectorFormat(camada, filename, options)
     
-
+# classe ocorrencia (inspecao_p)
 def camada_virtual():
     # Criar uma definição de campos vazios
     fields = QgsFields()
     #fields.append(QgsField('id', QVariant.int))
     fields.append(QgsField('id_measure', QVariant.String))
-    fields.append(QgsField('tx_report', QVariant.String))
+    fields.append(QgsField('layer', QVariant.String))
     fields.append(QgsField('var_1', QVariant.String))
     fields.append(QgsField('var_2', QVariant.String))
+    fields.append(QgsField('tx_report', QVariant.String))
+    
     
     # Criar uma camada virtual vazia
     #virtual_layer = QgsVectorLayer('Point?crs=EPSG:4674&field=id:integer', 'inspecao_p', 'memory')

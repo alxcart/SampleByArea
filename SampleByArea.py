@@ -8,7 +8,7 @@ This plugin elaborates the area-oriented sampling plan. It is based on the ISO 1
                               -------------------
         begin                : 2022-03-24
         git sha              : $Format:%H$
-        copyright            : (C) 2022 by Alex Santos
+        copyright            : (C) 2024 by Alex Santos
         email                : alxcart@gmail.com
  ***************************************************************************/
 
@@ -246,9 +246,7 @@ class SampleByArea:
             grid = size_of_grid(size, units_id)
             self.dlg.label_size.setText(str(grid))
             return units, units_id, grid
-    # End returns the unit of measure of the layer  
-
-
+    # End returns the unit of measure of the layer
 
 
     def run(self):
@@ -271,7 +269,7 @@ class SampleByArea:
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
             if layer.type() == QgsMapLayer.VectorLayer :
-                if layer.isValid()==True:
+                if layer.isValid()==True and layer.__len__()>=1: # layer valido e com pelo menos 1 registro
                     self.dlg.comboBox.addItem(layer.name(), layer )
         
         # show the dialog
@@ -306,6 +304,8 @@ class SampleByArea:
 
             # Grade function - Sample by area 
             # Diferença isSelectedId, features (grade)
+            #dp = selection.dataProvider()
+
             isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
             
             #features, featureCount = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
@@ -321,6 +321,7 @@ class SampleByArea:
             #classe_ocorrencia = camada_virtual()
             # Final msg
             #dir_style = os.path.dirname(__file__)
+
 
             if N > n:
                 sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)

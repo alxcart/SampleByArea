@@ -1,7 +1,7 @@
 Plugin Builder Results
 
 Your plugin SampleByArea was created in:
-    C:/PyQGIS/PluginBuider\SampleByArea
+    C:/PyQGIS/PluginBuider/SampleByArea
 
 Your QGIS plugin directory is located at:
     C:/Users/alxca/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins
