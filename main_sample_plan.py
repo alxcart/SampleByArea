@@ -1,7 +1,6 @@
-# functions e constants plugins
+# Functions e constants plugins
 # executable in Terminal Python QGIS 
 from qgis.core import *
-#from qgis.core import Qgis
 # #### Importar biblioteca "random"
 from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
 from qgis.core import *
@@ -47,6 +46,7 @@ from math import ceil # size of cell - sample by area
 # ## DESENVOLVIMENTO (Python)
 # #### Constantes do plugin
 # ##### Tabela 1 - Letra código com base no tamanho da populacao (N)
+# A(2) B(3) C(5) D(8) E(13) F(20) G(32) H(50) J(80) K(125) L(200) M(315) N(500) P(800) Q(1250) R(2000)
 """
 dicSampleLength={2:[2,2,3],
                  9:[2,3,5],
@@ -858,15 +858,17 @@ def save_gpkg(camada, filename, texto_id_file ):
     QgsVectorFileWriter.writeAsVectorFormat(class_notes, filename, options)
     #QgsVectorFileWriter.writeAsVectorFormat(camada, filename, options)
     
-
+# classe ocorrencia (inspecao_p)
 def camada_virtual():
     # Criar uma definição de campos vazios
     fields = QgsFields()
     #fields.append(QgsField('id', QVariant.int))
     fields.append(QgsField('id_measure', QVariant.String))
-    fields.append(QgsField('tx_report', QVariant.String))
+    fields.append(QgsField('layer', QVariant.String))
     fields.append(QgsField('var_1', QVariant.String))
     fields.append(QgsField('var_2', QVariant.String))
+    fields.append(QgsField('tx_report', QVariant.String))
+    
     
     # Criar uma camada virtual vazia
     #virtual_layer = QgsVectorLayer('Point?crs=EPSG:4674&field=id:integer', 'inspecao_p', 'memory')

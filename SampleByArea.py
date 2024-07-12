@@ -8,7 +8,7 @@ This plugin elaborates the area-oriented sampling plan. It is based on the ISO 1
                               -------------------
         begin                : 2022-03-24
         git sha              : $Format:%H$
-        copyright            : (C) 2022 by Alex Santos
+        copyright            : (C) 2024 by Alex Santos
         email                : alxcart@gmail.com
  ***************************************************************************/
 
@@ -246,9 +246,7 @@ class SampleByArea:
             grid = size_of_grid(size, units_id)
             self.dlg.label_size.setText(str(grid))
             return units, units_id, grid
-    # End returns the unit of measure of the layer  
-
-
+    # End returns the unit of measure of the layer
 
 
     def run(self):
