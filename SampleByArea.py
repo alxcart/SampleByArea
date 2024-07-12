@@ -269,7 +269,7 @@ class SampleByArea:
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
             if layer.type() == QgsMapLayer.VectorLayer :
-                if layer.isValid()==True:
+                if layer.isValid()==True and layer.__len__()>=1: # layer valido e com pelo menos 1 registro
                     self.dlg.comboBox.addItem(layer.name(), layer )
         
         # show the dialog
@@ -304,6 +304,8 @@ class SampleByArea:
 
             # Grade function - Sample by area 
             # Diferença isSelectedId, features (grade)
+            dp = selection.dataProvider()
+
             isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
             
             #features, featureCount = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
@@ -319,6 +321,7 @@ class SampleByArea:
             #classe_ocorrencia = camada_virtual()
             # Final msg
             #dir_style = os.path.dirname(__file__)
+
 
             if N > n:
                 sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)

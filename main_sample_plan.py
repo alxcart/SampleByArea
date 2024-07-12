@@ -749,14 +749,14 @@ def grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size):
     ############################
     #Data source
     ds = ogr.GetDriverByName("Esri Shapefile")
-            
+
     # Function size of grid
     grid = size_of_grid(size, units_id)
     grid_size = float(grid)
 
     # Data features from selection 
     lyrInput = selection
-            
+      
     fields = QgsFields() # utilizar na inspecao por area 
     fields.append(QgsField("id_measure", QVariant.Int))
     #fields.append(QgsField("checked", QVariant.String))
