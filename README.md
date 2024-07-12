@@ -2,7 +2,7 @@
 ![Logo sample by area](https://plugins.qgis.org/media/cache/f9/2c/f92cac6c1fc3bac1f4a406495ddcd766.png)
 
 ##### by Alex Santos (IBGE)
-##### version = 0.6
+##### version = 0.9
 ##### Github = alxcart
 
 ### About
