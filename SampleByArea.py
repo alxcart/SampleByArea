@@ -304,7 +304,7 @@ class SampleByArea:
 
             # Grade function - Sample by area 
             # Diferença isSelectedId, features (grade)
-            dp = selection.dataProvider()
+            #dp = selection.dataProvider()
 
             isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
             
