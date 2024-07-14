@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>369</height>
+    <width>700</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>260</y>
-     <width>341</width>
-     <height>32</height>
+     <x>400</x>
+     <y>300</y>
+     <width>201</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -38,10 +38,10 @@
   <widget class="QComboBox" name="comboBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>66</y>
-     <width>511</width>
-     <height>22</height>
+     <x>20</x>
+     <y>80</y>
+     <width>380</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -57,7 +57,7 @@
      <x>10</x>
      <y>10</y>
      <width>381</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">
@@ -76,10 +76,10 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>198</x>
-     <y>124</y>
-     <width>51</width>
-     <height>23</height>
+     <x>260</x>
+     <y>300</y>
+     <width>60</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="font">
@@ -97,10 +97,10 @@
   <widget class="QLineEdit" name="lineEditSize">
    <property name="geometry">
     <rect>
-     <x>306</x>
-     <y>130</y>
-     <width>181</width>
-     <height>20</height>
+     <x>397</x>
+     <y>140</y>
+     <width>220</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="inputMethodHints">
@@ -116,10 +116,10 @@
   <widget class="QLabel" name="tx_size">
    <property name="geometry">
     <rect>
-     <x>306</x>
-     <y>110</y>
-     <width>211</width>
-     <height>16</height>
+     <x>397</x>
+     <y>120</y>
+     <width>231</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
@@ -135,8 +135,8 @@
   <widget class="QLabel" name="tx_subtitle">
    <property name="geometry">
     <rect>
-     <x>17</x>
-     <y>350</y>
+     <x>20</x>
+     <y>380</y>
      <width>441</width>
      <height>16</height>
     </rect>
@@ -160,9 +160,9 @@
   <widget class="QLabel" name="tx_level">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>166</y>
-     <width>141</width>
+     <x>20</x>
+     <y>120</y>
+     <width>181</width>
      <height>16</height>
     </rect>
    </property>
@@ -179,8 +179,8 @@
   <widget class="QLabel" name="tx_layer">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>46</y>
+     <x>20</x>
+     <y>60</y>
      <width>171</width>
      <height>20</height>
     </rect>
@@ -198,10 +198,10 @@
   <widget class="QComboBox" name="comboBoxLevel">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>167</y>
-     <width>41</width>
-     <height>22</height>
+     <x>260</x>
+     <y>120</y>
+     <width>50</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -238,10 +238,10 @@
   <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>126</y>
-     <width>181</width>
-     <height>20</height>
+     <x>20</x>
+     <y>300</y>
+     <width>220</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -257,8 +257,8 @@
   <widget class="QLabel" name="tx_folder">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>106</y>
+     <x>20</x>
+     <y>280</y>
      <width>161</width>
      <height>20</height>
     </rect>
@@ -276,8 +276,8 @@
   <widget class="QLabel" name="label_units">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>180</y>
+     <x>500</x>
+     <y>190</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -306,8 +306,8 @@
   <widget class="QLabel" name="tx_units_2">
    <property name="geometry">
     <rect>
-     <x>304</x>
-     <y>160</y>
+     <x>397</x>
+     <y>170</y>
      <width>221</width>
      <height>20</height>
     </rect>
@@ -334,8 +334,8 @@
   <widget class="QLabel" name="label_size">
    <property name="geometry">
     <rect>
-     <x>307</x>
-     <y>180</y>
+     <x>407</x>
+     <y>190</y>
      <width>91</width>
      <height>20</height>
     </rect>
@@ -370,8 +370,8 @@
   <widget class="QLabel" name="tx_subtitle_2">
    <property name="geometry">
     <rect>
-     <x>16</x>
-     <y>330</y>
+     <x>19</x>
+     <y>360</y>
      <width>441</width>
      <height>16</height>
     </rect>
@@ -395,9 +395,9 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>240</x>
+     <x>30</x>
      <y>30</y>
-     <width>251</width>
+     <width>311</width>
      <height>20</height>
     </rect>
    </property>
@@ -420,10 +420,10 @@
   <widget class="QComboBox" name="comboBoxLQA">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>260</y>
-     <width>91</width>
-     <height>22</height>
+     <x>260</x>
+     <y>220</y>
+     <width>100</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -492,9 +492,9 @@
   <widget class="QLabel" name="tx_type_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>263</y>
-     <width>191</width>
+     <x>20</x>
+     <y>220</y>
+     <width>231</width>
      <height>16</height>
     </rect>
    </property>
@@ -511,10 +511,10 @@
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>224</y>
-     <width>161</width>
-     <height>20</height>
+     <x>20</x>
+     <y>190</y>
+     <width>201</width>
+     <height>16</height>
     </rect>
    </property>
    <property name="font">
@@ -536,10 +536,10 @@
   <widget class="QComboBox" name="comboBoxType">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>210</y>
-     <width>81</width>
-     <height>22</height>
+     <x>260</x>
+     <y>170</y>
+     <width>100</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -570,9 +570,9 @@
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>180</y>
-     <width>161</width>
+     <x>20</x>
+     <y>140</y>
+     <width>191</width>
      <height>20</height>
     </rect>
    </property>
@@ -595,10 +595,10 @@
   <widget class="QLabel" name="tx_type">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>212</y>
-     <width>141</width>
-     <height>16</height>
+     <x>20</x>
+     <y>170</y>
+     <width>171</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">
@@ -614,9 +614,9 @@
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>280</y>
-     <width>181</width>
+     <x>20</x>
+     <y>240</y>
+     <width>221</width>
      <height>20</height>
     </rect>
    </property>
@@ -639,8 +639,8 @@
   <widget class="QLabel" name="tx_subtitle_3">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>310</y>
+     <x>17</x>
+     <y>333</y>
      <width>441</width>
      <height>16</height>
     </rect>
