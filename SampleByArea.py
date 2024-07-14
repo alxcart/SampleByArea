@@ -21,7 +21,7 @@ This plugin elaborates the area-oriented sampling plan. It is based on the ISO 1
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt5.QtCore import QSettings, QTranslator, QCoreApplication, qVersion
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
 

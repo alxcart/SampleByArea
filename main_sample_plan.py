@@ -405,7 +405,7 @@ def list_layers():
     layers = QgsProject.instance().mapLayers().values()
     for layer in layers:
         if layer.type() == 1 :
-            if layer.isValid()==True:
+            if layer.isValid()==True and layer.__len__()>=1: # layer valido e com pelo menos 1 registro:
                 self.dlg.comboBox.addItem( layer.name(), layer )
     return layers 
 
