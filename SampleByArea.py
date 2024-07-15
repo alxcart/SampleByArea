@@ -322,10 +322,9 @@ class SampleByArea:
                 N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao, ATIVO)
                 features = selection 
                 isSelectedId = sample_features(N, n)
-                
               
             
-            if N > n and ATIVO == "area":
+            if N > n:# and ATIVO == "area":
                 #codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao, ATIVO)
                 codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_plan (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao, ATIVO)
                 filename = nome_arquivo
@@ -335,6 +334,7 @@ class SampleByArea:
                 sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
                 texto_metadado = metadado(sumario, texto_resultado, size, selection.name(), nome_arquivo)
                 save_gpkg(ly_virtual, filename, codigo_arquivo)  
+                # Definir o caminho para o arquivo Geopackage
                 geopackage_path = nome_arquivo
 
                 layer = QgsVectorLayer(nome_arquivo, "sample_" + str(ATIVO) + "_" + str(codigo_arquivo) ,"ogr")
@@ -342,6 +342,12 @@ class SampleByArea:
                     f = open (directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qmd", "w+")
                     f.write(texto_metadado)
                     f.close()
+                    # nome dos estilos
+                    style_name = "sample_" + str(ATIVO) + str(codigo_arquivo)
+                    style_name_inspecao_p = "inspecao_p_style"
+                    style_name_inspecao_l = "inspecao_l_style"
+                    style_name_inspecao_a = "inspecao_a_style"
+                    
                     # criar função define_style
                     dir_style = os.path.dirname(__file__) # 'C:\\Users/Admin/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SampleByArea'
                     style_inspecao_a = (dir_style + '/inspecao_a.qml')
@@ -349,72 +355,43 @@ class SampleByArea:
                     style_inspecao_p = (dir_style + '/inspecao_p.qml')
                     layer_sample = iface.addVectorLayer(nome_arquivo, "" ,"ogr")
                     
-                    # Definir o caminho para o arquivo Geopackage
-                    # geopackage_path = filename
                     # Definir o nome da camada e o nome do estilo
-                    # layer_name = "sample_" + str(ATIVO) + str(codigo_arquivo)
-                    # style sample area
-                    # layer_names = [layer.name() for layer in project.mapLayers().values()]
                     # layer_name = "your_layer_name" sample_area_3S
-                    
+                    # Obter camadas do projeto (QgsProject)
                     project = QgsProject.instance()
                     layer_name = "sample_" + str(ATIVO) + "_" + str(codigo_arquivo)
                     layer_inspecao = "inspecao_p"
+                    # Verificar se a camada existe no projeto
                     layer_p = project.mapLayersByName(layer_name)[0]
-                    style_name = "sample_" + str(ATIVO) + str(codigo_arquivo)
-                    style_name_inspecao_p = "inspecao_p_style"
-                    
-                    layer_p.loadNamedStyle(style_inspecao_a)
-                    #result = layer.exportNamedStyleToDatabase("sample_" + str(ATIVO) + str(codigo_arquivo), geopackage_path, "gpkg", True)
-                    #result = layer.exportNamedStyle(sample_a, geopackage_path, "gpkg", "", True)
-                    #result = layer_p.exportNamedStyle(style_name, geopackage_path, "gpkg", "", True)
-                    result = layer_p.exportNamedStyle(style_name, geopackage_path, True, "")
-
                     inspecao_p = project.mapLayersByName(layer_inspecao)[0]
+
+                    #carregar estilos (QML)
+                    layer_p.loadNamedStyle(style_inspecao_a)
                     inspecao_p.loadNamedStyle(style_inspecao_p)
-                    #result = inspecao_p.exportNamedStyle("sample_" + str(ATIVO) + str(codigo_arquivo), geopackage_path, "gpkg", True)
-                    result = inspecao_p.exportNamedStyle(style_name_inspecao_p, geopackage_path, True, "")
                     
-                    #layer_style_name = layer.styleManager().currentStyle()
-                    #style_manager = QgsMapLayerStyleManager(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
+                    # Salvar o estilo no diretorio
+                    layer.saveNamedStyle(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
+                    inspecao_p.saveNamedStyle(directory + "/inspecao_p.qml")
+
                     # Salvar o estilo no Geopackage
-                    #style_manager.saveStyleToDatabase("sample_" + str(ATIVO), geopackage_path)
-                    #print("Estilo salvo com sucesso no Geopackage.")
-                    #QMessageBox.about(None, "Style Manager 1", "Estilo salvo com sucesso no Geopackage.")
-                    #layer.loadNamedStyle(style)
-                    #layer.saveNamedStyle(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
-                    #style inspecao pontual
-                    
-                    
-                    #inspecao_p_style.loadNamedStyle(style_inspecao_p)
-                    #inspecao_p_style.saveNamedStyle(directory + "/inspecao_p.qml")
-                    
-                    #style_manager = QgsMapLayerStyleManager(str(qml_path+ "/sample_area_" + codigo_arquivo + ".qml"))
+                    #style_manager = QgsMapLayerStyleManager(str(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml"))
                     #style_manager.saveStyleToDatabase(style_name, geopackage_path)
-                    
-                    # Obter o objeto QgsProject
-                    # project = QgsProject.instance()
-                    
-                    # # Verificar se a camada existe no projeto
+                    #result = layer.exportNamedStyleToDatabase("sample_" + str(ATIVO) + str(codigo_arquivo), geopackage_path, "gpkg", True)
+                                        
                     # if layer_name in project.mapLayers():
                     #     # Obter a camada
                     #     layer = project.mapLayersByName(layer_name)[0]
-
                     #     # Obter o nome do estilo da camada
                     #     layer_style_name = layer.styleManager().currentStyle()
-
                     #     # Verificar se o estilo atual existe
                     #     if layer_style_name:
                     #         # Obter o caminho para o arquivo QML do estilo
                     #         qml_path = layer.styleManager().styleUri(layer_style_name)
                     #         #qml_path = directory + "/sample_area_" + codigo_arquivo + ".qml"
-
                     #         # Carregar o estilo do arquivo QML
                     #         style_manager = QgsMapLayerStyleManager(qml_path)
-
                     #         # Salvar o estilo no Geopackage
                     #         style_manager.saveStyleToDatabase(style_name, geopackage_path)
-
                     #         #print("Estilo salvo com sucesso no Geopackage.")
                     #         QMessageBox.about(None, "Style Manager 1", "Estilo salvo com sucesso no Geopackage.")
                     #     else:
@@ -424,9 +401,6 @@ class SampleByArea:
                     #     #print("Camada não encontrada no projeto.")
                     #     QMessageBox.about(None, "Style Manager 3", "Camada não encontrada no projeto.")
                     # '''
-
-
-                    #layer_sample.saveNamedStyleToDatabase(filename, style_chat) # + "/sample_area_" + codigo_arquivo + ".qml")
                     
                     QMessageBox.about(None, "Sample by area", sumario)
                 if layer.isValid() == False:
