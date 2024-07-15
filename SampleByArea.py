@@ -282,7 +282,7 @@ class SampleByArea:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             #pass
-            ATIVO = "area"
+            #ATIVO = "area"
             #ATIVO = "feature"
 
             try: 
@@ -294,7 +294,7 @@ class SampleByArea:
                 return True
                            
 
-            directory = self.folderName + "/sample_area"
+            directory = self.folderName + "/sample_" + str(ATIVO) 
             if not os.path.exists(directory):
                 os.makedirs(directory)
 
@@ -330,37 +330,65 @@ class SampleByArea:
                 codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_plan (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao, ATIVO)
                 filename = nome_arquivo
                 ly_virtual = amostra_virtual
+                size = selection.__len__()
                 
                 sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
                 texto_metadado = metadado(sumario, texto_resultado, size, selection.name(), nome_arquivo)
                 save_gpkg(ly_virtual, filename, codigo_arquivo)  
+                geopackage_path = nome_arquivo
 
-                layer = QgsVectorLayer(nome_arquivo, "sample_area_" + str(codigo_arquivo) ,"ogr")
+                layer = QgsVectorLayer(nome_arquivo, "sample_" + str(ATIVO) + "_" + str(codigo_arquivo) ,"ogr")
                 if layer.isValid() == True:
-                    f = open (directory + "/sample_area_" + codigo_arquivo + ".qmd", "w+")
+                    f = open (directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qmd", "w+")
                     f.write(texto_metadado)
                     f.close()
                     # criar função define_style
                     dir_style = os.path.dirname(__file__) # 'C:\\Users/Admin/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SampleByArea'
-                    style = (dir_style + '/inspecao_a.qml')
+                    style_inspecao_a = (dir_style + '/inspecao_a.qml')
+                    style_inspecao_l = (dir_style + '/inspecao_l.qml')
                     style_inspecao_p = (dir_style + '/inspecao_p.qml')
                     layer_sample = iface.addVectorLayer(nome_arquivo, "" ,"ogr")
+                    
                     # Definir o caminho para o arquivo Geopackage
-                    #geopackage_path = filename
-
+                    # geopackage_path = filename
                     # Definir o nome da camada e o nome do estilo
-                    layer_name = "sample_area_" + codigo_arquivo
-                    layer_inspecao = "inspecao_p"
-                    #style sample area
+                    # layer_name = "sample_" + str(ATIVO) + str(codigo_arquivo)
+                    # style sample area
+                    # layer_names = [layer.name() for layer in project.mapLayers().values()]
+                    # layer_name = "your_layer_name" sample_area_3S
+                    
                     project = QgsProject.instance()
-                    layer = project.mapLayersByName(layer_name)[0]
-                    layer.loadNamedStyle(style)
-                    layer.saveNamedStyle(directory + "/sample_area_" + codigo_arquivo + ".qml") 
+                    layer_name = "sample_" + str(ATIVO) + "_" + str(codigo_arquivo)
+                    layer_inspecao = "inspecao_p"
+                    layer_p = project.mapLayersByName(layer_name)[0]
+                    style_name = "sample_" + str(ATIVO) + str(codigo_arquivo)
+                    style_name_inspecao_p = "inspecao_p_style"
+                    
+                    layer_p.loadNamedStyle(style_inspecao_a)
+                    #result = layer.exportNamedStyleToDatabase("sample_" + str(ATIVO) + str(codigo_arquivo), geopackage_path, "gpkg", True)
+                    #result = layer.exportNamedStyle(sample_a, geopackage_path, "gpkg", "", True)
+                    #result = layer_p.exportNamedStyle(style_name, geopackage_path, "gpkg", "", True)
+                    result = layer_p.exportNamedStyle(style_name, geopackage_path, True, "")
 
+                    inspecao_p = project.mapLayersByName(layer_inspecao)[0]
+                    inspecao_p.loadNamedStyle(style_inspecao_p)
+                    #result = inspecao_p.exportNamedStyle("sample_" + str(ATIVO) + str(codigo_arquivo), geopackage_path, "gpkg", True)
+                    result = inspecao_p.exportNamedStyle(style_name_inspecao_p, geopackage_path, True, "")
+                    
+                    #layer_style_name = layer.styleManager().currentStyle()
+                    #style_manager = QgsMapLayerStyleManager(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
+                    # Salvar o estilo no Geopackage
+                    #style_manager.saveStyleToDatabase("sample_" + str(ATIVO), geopackage_path)
+                    #print("Estilo salvo com sucesso no Geopackage.")
+                    #QMessageBox.about(None, "Style Manager 1", "Estilo salvo com sucesso no Geopackage.")
+                    #layer.loadNamedStyle(style)
+                    #layer.saveNamedStyle(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
                     #style inspecao pontual
-                    inspecao_p_style = project.mapLayersByName(layer_inspecao)[0]
-                    inspecao_p_style.loadNamedStyle(style_inspecao_p)
-                    inspecao_p_style.saveNamedStyle(directory + "/inspecao_p.qml")
+                    
+                    
+                    #inspecao_p_style.loadNamedStyle(style_inspecao_p)
+                    #inspecao_p_style.saveNamedStyle(directory + "/inspecao_p.qml")
+                    
                     #style_manager = QgsMapLayerStyleManager(str(qml_path+ "/sample_area_" + codigo_arquivo + ".qml"))
                     #style_manager.saveStyleToDatabase(style_name, geopackage_path)
                     

@@ -11,6 +11,8 @@ import random
 import os.path
 from math import ceil # size of cell - sample by area
 #from .constants import * # constants of project
+ATIVO = "area"
+#ATIVO = "feature"
 
 """
 # Sampling plan / Plano de amostragem
@@ -475,6 +477,7 @@ def sample_features(pop_size, sample_size):
     return isSelectedId
 
 #################################################
+#################################################
 def output_sample_plan(pop_size, sample_size, selection, directory, grade, isSelectedId, mensagem, num_aceitacao, ATIVO): 
     if pop_size > sample_size:
         features, dp, provider, geometry, crs, encoding  = data_provider(selection)
@@ -485,7 +488,9 @@ def output_sample_plan(pop_size, sample_size, selection, directory, grade, isSel
             fields = add_fields(dp)
                 
         if ATIVO == "area":
-            geometry = 6 #'MultiPolygon' 
+            geometry = 6 #'MultiPolygon'
+            geom_type_str = QgsWkbTypes.displayString(geometry)
+            #fields = add_fields_by_area(file) 
         
         #fields = add_fields_by_area(dp)
         tipo = "C"
@@ -521,136 +526,15 @@ def output_sample_plan(pop_size, sample_size, selection, directory, grade, isSel
         tx_data = data_sample()
         texto_id_file = (str(sample_size)  + tipo) # + "_" + str(tx_data))
         #filename = os.path.join(directory + "/sample_area_" + texto_id_file + ".shp")
-        filename = os.path.join(directory + "/sample_area_" + texto_id_file + "_" + str(tx_data) + str(".gpkg"))
-        #filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + selection.name() + str(".gpkg"))
-        lyrIntermediate=QgsVectorLayer("MultiPolygon"+"?crs="+str(crs.authid()),"","memory")
-        lyrIntermediate.setCrs(crs)
-        file = lyrIntermediate.dataProvider()
-        fields = add_fields_by_area(file)
-        lyrIntermediate.dataProvider().addAttributes(fields)
-        lyrIntermediate.updateFields()        
-
-        for i, feat in enumerate(grade):
-            if i in isSelectedId:
-                file.addFeature(feat)
-        del file
-        
-        return texto_id_file, filename, lyrIntermediate
-
-'''
-#################################################
-def output_sample(pop_size, sample_size, selection, directory, mensagem, num_aceitacao): 
-    if pop_size > sample_size:
-        isSelectedId = sample_features(pop_size, sample_size)
-        features, dp, provider, geometry, crs, encoding  = data_provider(selection)
-        geom_type_str = QgsWkbTypes.displayString(geometry)
-        fields = add_fields(dp)
-        tipo = "C"
-        if mensagem == "inspeção amostral simples":
-            tipo = "S"
-            Ac, Re = dicAc_simples[num_aceitacao]
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
-
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-
-        if mensagem == "inspeção amostral dupla": 
-            tipo = "D"
-            Ac, Re = dicAc_dupla[num_aceitacao]
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-        if mensagem == "inspeção amostral múltipla": 
-            tipo = "M"
-            Ac, Re = dicAc_multipla[num_aceitacao]  
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) + "_" 
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"        
-        
-        
-        tx_data = data_sample()
-        texto_id_file = (str(sample_size)  + tipo) # + "_" + str(tx_data))
-        #filename = os.path.join(directory + "/sample_area_" + texto_id_file + ".shp")
-        filename = os.path.join(directory + "/sample_feature_" + texto_id_file + "_" + str(tx_data) + str(".gpkg"))
+        filename = os.path.join(directory + "/sample_" + str(ATIVO) + "_" + texto_id_file + "_" + str(tx_data) + str(".gpkg"))
         #filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + selection.name() + str(".gpkg"))
         lyrIntermediate=QgsVectorLayer(str(geom_type_str)+"?crs="+str(crs.authid()),"","memory")
         lyrIntermediate.setCrs(crs)
         file = lyrIntermediate.dataProvider()
-        #fields = add_fields_by_area(file) - FIELDS BY AREA
-        #fields = add_fields(dp) - FIELDS BY FEATURE (SELECTION USER)
-        lyrIntermediate.dataProvider().addAttributes(fields)
-        lyrIntermediate.updateFields()
-
-        for i, feat in enumerate(features):
-            if i in isSelectedId:
-                file.addFeature(feat)
-        del file
-        
-
-        return texto_id_file, filename, lyrIntermediate
-        #return texto_id_file, filename
-
-#################################################
-def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSelectedId, mensagem, num_aceitacao, ATIVO): 
-    if pop_size > sample_size:
-        features, dp, provider, geometry, crs, encoding  = data_provider(selection)
-        geom_type_str = QgsWkbTypes.displayString(geometry)
-
-        if ATIVO == "feature":
-            isSelectedId = sample_features(pop_size, sample_size)
-            fields = add_fields(dp)
                 
         if ATIVO == "area":
-            geometry = 6 #'MultiPolygon' 
+            fields = add_fields_by_area(file) 
         
-        #fields = add_fields_by_area(dp)
-        tipo = "C"
-        if mensagem == "inspeção amostral simples":
-            tipo = "S"
-            Ac, Re = dicAc_simples[num_aceitacao]
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) #+ "_" 
-
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-
-        if mensagem == "inspeção amostral dupla": 
-            tipo = "D"
-            Ac, Re = dicAc_dupla[num_aceitacao]
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) #+ "_" 
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-        if mensagem == "inspeção amostral múltipla": 
-            tipo = "M"
-            Ac, Re = dicAc_multipla[num_aceitacao]  
-            texto_ac_re = "_Ac" + str(Ac) + "_Re" + str(Re) # + "_" 
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"
-            if Ac == "Utilizar plano de amostragem simples indicado acima" or Ac == "Aceitação não permitida com o tamanho de amostra indicado":
-                texto_ac_re = "_NA_"           
-        
-        tx_data = data_sample()
-        texto_id_file = (str(sample_size)  + tipo) # + "_" + str(tx_data))
-        #filename = os.path.join(directory + "/sample_area_" + texto_id_file + ".shp")
-        filename = os.path.join(directory + "/sample_area_" + texto_id_file + "_" + str(tx_data) + str(".gpkg"))
-        #filename = os.path.join(directory + "/sample_" + str(sample_size) + tipo + selection.name() + str(".gpkg"))
-        lyrIntermediate=QgsVectorLayer("MultiPolygon"+"?crs="+str(crs.authid()),"","memory")
-        lyrIntermediate.setCrs(crs)
-        file = lyrIntermediate.dataProvider()
-        fields = add_fields_by_area(file)
         lyrIntermediate.dataProvider().addAttributes(fields)
         lyrIntermediate.updateFields()        
 
@@ -660,7 +544,6 @@ def output_sample_grade(pop_size, sample_size, selection, directory, grade, isSe
         del file
         
         return texto_id_file, filename, lyrIntermediate
-'''
 
 #################################################              
 def msg_sample_plan(pop_size, sample_size, num_aceitacao, letra_codigo_i, letra_codigo_f, mensagem, lqa, nivel_inspecao):
