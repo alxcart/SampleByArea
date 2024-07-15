@@ -27,12 +27,12 @@ from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
 
 from qgis.core import *
 from math import ceil
-import os.path
+#import os.path
 from osgeo import ogr
 import random
 
-#from .constants import * # constants of project
 from .main_sample_plan import * # functions of project
+#from .constants import * # constants of project
 #import sys # usar no desenvolvimento #
 #sys.path.append(os.path.abspath(r"C:/Users/Admin/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/SampleByArea/"))
 #from main_sample_plan import *
@@ -48,7 +48,8 @@ from .resources import *
 # Import the code for the dialog
 from .SampleByArea_dialog import SampleByAreaDialog
 import os.path
-    
+
+   
 
 class SampleByArea:
     """QGIS Plugin Implementation."""
@@ -247,8 +248,7 @@ class SampleByArea:
             self.dlg.label_size.setText(str(grid))
             return units, units_id, grid
     # End returns the unit of measure of the layer
-
-
+    
     def run(self):
         """Run method that performs all the real work"""
         # Create the dialog with elements (after translation) and keep reference
@@ -282,6 +282,9 @@ class SampleByArea:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             #pass
+            ATIVO = "area"
+            #ATIVO = "feature"
+
             try: 
                 if not os.path.isdir(self.folderName):
                     raise FileNotFoundError(
@@ -306,28 +309,25 @@ class SampleByArea:
             tipo_inspecao = self.dlg.comboBoxType.currentIndex()
             lqa = self.dlg.comboBoxLQA.currentIndex()
 
-            # Grade function - Sample by area 
-            # Diferença isSelectedId, features (grade)
-            #dp = selection.dataProvider()
+            #ATIVO = "area"
+            #ATIVO = "feature"
             
-
-            isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
+            ###########  Sample by area ###############################   
+            if ATIVO =="area": 
+                isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
             
-            #features, featureCount = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
-            #N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (featureCount, nivel_inspecao, lqa + 4 , tipo_inspecao)
-            # grade = features 
-            #randomNum, isSelectedId = sistematic_sample(N,n)
+            ###########  Sample by features ###########################   
 
-            # Export results - file created and save
-            #pth = directory
-
-            #classe_ocorrencia = camada_virtual()
-            # Final msg
-            #dir_style = os.path.dirname(__file__)
-
-
-            if N > n:
-                codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
+            if ATIVO == "feature":
+                N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao, ATIVO)
+                features = selection 
+                isSelectedId = sample_features(N, n)
+                
+              
+            
+            if N > n and ATIVO == "area":
+                #codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao, ATIVO)
+                codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_plan (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao, ATIVO)
                 filename = nome_arquivo
                 ly_virtual = amostra_virtual
                 
@@ -342,7 +342,7 @@ class SampleByArea:
                     f.close()
                     # criar função define_style
                     dir_style = os.path.dirname(__file__) # 'C:\\Users/Admin/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SampleByArea'
-                    style = (dir_style + '/sample_area.qml')
+                    style = (dir_style + '/inspecao_a.qml')
                     style_inspecao_p = (dir_style + '/inspecao_p.qml')
                     layer_sample = iface.addVectorLayer(nome_arquivo, "" ,"ogr")
                     # Definir o caminho para o arquivo Geopackage
