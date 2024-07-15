@@ -282,10 +282,14 @@ class SampleByArea:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             #pass
-
-            if not os.path.isdir(self.folderName):
-                raise FileNotFoundError(
-                    errno.ENOENT, os.strerror(errno.ENOENT), self.folderName)
+            try: 
+                if not os.path.isdir(self.folderName):
+                    raise FileNotFoundError(
+                        errno.ENOENT, os.strerror(errno.ENOENT), self.folderName)
+            except NameError:
+                QMessageBox.critical(None, "Folder not found", "Please select folder")
+                return True
+                           
 
             directory = self.folderName + "/sample_area"
             if not os.path.exists(directory):
@@ -305,6 +309,7 @@ class SampleByArea:
             # Grade function - Sample by area 
             # Diferença isSelectedId, features (grade)
             #dp = selection.dataProvider()
+            
 
             isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
             
@@ -315,15 +320,17 @@ class SampleByArea:
 
             # Export results - file created and save
             #pth = directory
-            codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
-            filename = nome_arquivo
-            ly_virtual = amostra_virtual
+
             #classe_ocorrencia = camada_virtual()
             # Final msg
             #dir_style = os.path.dirname(__file__)
 
 
             if N > n:
+                codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao)
+                filename = nome_arquivo
+                ly_virtual = amostra_virtual
+                
                 sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
                 texto_metadado = metadado(sumario, texto_resultado, size, selection.name(), nome_arquivo)
                 save_gpkg(ly_virtual, filename, codigo_arquivo)  

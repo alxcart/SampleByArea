@@ -309,20 +309,24 @@ def select_sample (N, n):
 
 def sistematic_sample(N, n):
 #Systematic sampling #Amostragem sistematica
-    randomNum = random.sample(range(N),1)[0]
-
-    step= N // n
-    module = randomNum % step
-
-    listIds=range(N) 
-    isSelectedId = []
-    x = 1
-    for i in listIds:
-        if x <= n: 
-            if (i) % step == module:
-                isSelectedId.append(i)
-                x += 1   
-    return randomNum, isSelectedId
+    if N > n:
+        randomNum = random.sample(range(N),1)[0]
+        step= N // n
+        try:
+            module = randomNum % step
+        except ZeroDivisionError:
+                module = 0
+                step =1
+                return True
+        listIds=range(N) 
+        isSelectedId = []
+        x = 1
+        for i in listIds:
+            if x <= n: 
+                if (i) % step == module:
+                    isSelectedId.append(i)
+                    x += 1   
+        return randomNum, isSelectedId
 ## Incluir o layer temporário/intermediário para permitir a execução desta função
 ## Será necessário mais variáveis 
 
@@ -814,8 +818,11 @@ def grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size):
     sample_size = n
     ############################            
     #Systematic sampling #Amostragem sistematica
-    randomNum, isSelectedId = sistematic_sample(N, n)
-    
+    if N>n:
+        randomNum, isSelectedId = sistematic_sample(N, n)
+    if N<n:
+        isSelectedId = range(N) 
+        
     return isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg
 
 def get_layer():
