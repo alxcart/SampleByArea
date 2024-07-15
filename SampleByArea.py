@@ -47,9 +47,7 @@ from processing.algs.gdal.GdalUtils import GdalUtils
 from .resources import *
 # Import the code for the dialog
 from .SampleByArea_dialog import SampleByAreaDialog
-import os.path
-
-   
+import os.path   
 
 class SampleByArea:
     """QGIS Plugin Implementation."""
@@ -312,12 +310,15 @@ class SampleByArea:
             #ATIVO = "area"
             #ATIVO = "feature"
             
-            ###########  Sample by area ###############################   
+            ##################################################################
+            ###########  SAMPLE BY AREA ######################################
+            ##################################################################
             if ATIVO =="area": 
                 isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
             
-            ###########  Sample by features ###########################   
-
+            ##################################################################
+            ###########  SAMPLE BY FEATURE ###################################
+            ##################################################################
             if ATIVO == "feature":
                 N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao, ATIVO)
                 features = selection 
@@ -336,84 +337,18 @@ class SampleByArea:
                 save_gpkg(ly_virtual, filename, codigo_arquivo)  
                 # Definir o caminho para o arquivo Geopackage
                 geopackage_path = nome_arquivo
+                
+                #### LAYER PLANO DE AMOSTRAGEM
+                #layer = QgsVectorLayer(nome_arquivo, "sample_" + str(ATIVO) + "_" + str(codigo_arquivo) ,"ogr")
 
-                layer = QgsVectorLayer(nome_arquivo, "sample_" + str(ATIVO) + "_" + str(codigo_arquivo) ,"ogr")
-                if layer.isValid() == True:
-                    f = open (directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qmd", "w+")
-                    f.write(texto_metadado)
-                    f.close()
-                    # nome dos estilos
-                    style_name = "sample_" + str(ATIVO) + str(codigo_arquivo)
-                    style_name_inspecao_p = "inspecao_p_style"
-                    style_name_inspecao_l = "inspecao_l_style"
-                    style_name_inspecao_a = "inspecao_a_style"
-                    
-                    # criar função define_style
-                    dir_style = os.path.dirname(__file__) # 'C:\\Users/Admin/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SampleByArea'
-                    style_inspecao_a = (dir_style + '/inspecao_a.qml')
-                    style_inspecao_l = (dir_style + '/inspecao_l.qml')
-                    style_inspecao_p = (dir_style + '/inspecao_p.qml')
-                    layer_sample = iface.addVectorLayer(nome_arquivo, "" ,"ogr")
-                    
-                    # Definir o nome da camada e o nome do estilo
-                    # layer_name = "your_layer_name" sample_area_3S
-                    # Obter camadas do projeto (QgsProject)
-                    project = QgsProject.instance()
-                    layer_name = "sample_" + str(ATIVO) + "_" + str(codigo_arquivo)
-                    layer_inspecao = "inspecao_p"
-                    # Verificar se a camada existe no projeto
-                    layer_p = project.mapLayersByName(layer_name)[0]
-                    inspecao_p = project.mapLayersByName(layer_inspecao)[0]
+                #### carregar plano de amostragem no projeto
+                load_sample_plan(nome_arquivo, ATIVO, codigo_arquivo, directory, texto_metadado, sumario)
+                
+                #### carregar simbologia ao projeto
+                #if layer.isValid() == True:
+                #    #### carregar simbologia
+                #    load_simbology(nome_arquivo, ATIVO, codigo_arquivo, directory)
 
-                    #carregar estilos (QML)
-                    layer_p.loadNamedStyle(style_inspecao_a)
-                    inspecao_p.loadNamedStyle(style_inspecao_p)
-                    
-                    # Salvar o estilo no diretorio
-                    layer.saveNamedStyle(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
-                    inspecao_p.saveNamedStyle(directory + "/inspecao_p.qml")
 
-                    # Salvar o estilo no Geopackage
-                    #style_manager = QgsMapLayerStyleManager(str(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml"))
-                    #style_manager.saveStyleToDatabase(style_name, geopackage_path)
-                    #result = layer.exportNamedStyleToDatabase("sample_" + str(ATIVO) + str(codigo_arquivo), geopackage_path, "gpkg", True)
-                                        
-                    # if layer_name in project.mapLayers():
-                    #     # Obter a camada
-                    #     layer = project.mapLayersByName(layer_name)[0]
-                    #     # Obter o nome do estilo da camada
-                    #     layer_style_name = layer.styleManager().currentStyle()
-                    #     # Verificar se o estilo atual existe
-                    #     if layer_style_name:
-                    #         # Obter o caminho para o arquivo QML do estilo
-                    #         qml_path = layer.styleManager().styleUri(layer_style_name)
-                    #         #qml_path = directory + "/sample_area_" + codigo_arquivo + ".qml"
-                    #         # Carregar o estilo do arquivo QML
-                    #         style_manager = QgsMapLayerStyleManager(qml_path)
-                    #         # Salvar o estilo no Geopackage
-                    #         style_manager.saveStyleToDatabase(style_name, geopackage_path)
-                    #         #print("Estilo salvo com sucesso no Geopackage.")
-                    #         QMessageBox.about(None, "Style Manager 1", "Estilo salvo com sucesso no Geopackage.")
-                    #     else:
-                    #         #print("Nenhum estilo definido para a camada.")
-                    #         QMessageBox.about(None, "Style Manager 2", "Nenhum estilo definido para a camada.")
-                    # else:
-                    #     #print("Camada não encontrada no projeto.")
-                    #     QMessageBox.about(None, "Style Manager 3", "Camada não encontrada no projeto.")
-                    # '''
-                    
-                    QMessageBox.about(None, "Sample by area", sumario)
-                if layer.isValid() == False:
-                    QMessageBox.warning(None, "Sample by area", "O arquivo " + 
-                                        codigo_arquivo + " já existe na pasta.\n" +
-                                        "\n   Por favor, alterar os parâmetros do plano de amostragem" +
-                                        "\nou selecionar uma nova pasta.\n"
-                                        )
-
-                # carregar metadado neste momento. 
-                # checar existencia do arquivo antes de escrever. Atualmente, o anterior é perdido. 
-                #Carregar camada
-                #QgsProject.instance().addMapLayer(ly)
-                           
             if N <= n:
                 msg_complete( N, n, msg)
