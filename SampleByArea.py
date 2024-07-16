@@ -307,9 +307,6 @@ class SampleByArea:
             tipo_inspecao = self.dlg.comboBoxType.currentIndex()
             lqa = self.dlg.comboBoxLQA.currentIndex()
 
-            #ATIVO = "area"
-            #ATIVO = "feature"
-            
             ##################################################################
             ###########  SAMPLE BY AREA ######################################
             ##################################################################
@@ -320,7 +317,7 @@ class SampleByArea:
             ###########  SAMPLE BY FEATURE ###################################
             ##################################################################
             if ATIVO == "feature":
-                N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao, ATIVO)
+                N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao)
                 features = selection 
                 isSelectedId = sample_features(N, n)
               

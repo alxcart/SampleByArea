@@ -486,6 +486,7 @@ def output_sample_plan(pop_size, sample_size, selection, directory, grade, isSel
         if ATIVO == "feature":
             isSelectedId = sample_features(pop_size, sample_size)
             fields = add_fields(dp)
+            grade = features
                 
         if ATIVO == "area":
             geometry = 6 #'MultiPolygon'
