@@ -23,10 +23,10 @@ repository=https://github.com/alxcart/SampleByArea
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-# changelog=
+# changelog= added layer field. revised layout, resolved some bugs, script optimization
 
 # Tags are comma separated with spaces allowed
-tags= sampling plan, spatial data quality, sample, feature, vector, quality, iso 19157:2013, acceptable quality limit, AQL, LQA, amostra, amostragem
+tags= sampling plan, spatial data quality, sample, feature, vector, quality, iso 19157:2013, acceptable quality limit, AQL, LQA, amostra, amostragem, geopackage
 
 homepage=https://github.com/alxcart/SampleByArea/wiki
 category=Vector
@@ -36,4 +36,3 @@ experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
-
