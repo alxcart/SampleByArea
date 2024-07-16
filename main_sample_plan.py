@@ -812,7 +812,7 @@ def data_sample():
     segundo = data.second
     tx_data = str(ano)+str(mes)+str(dia)+str(hora)+str(minuto)+str(segundo)
     return tx_data
-    
+'''    
 #################################################
 def save_gpkg(camada, filename, texto_id_file ):
     options = QgsVectorFileWriter.SaveVectorOptions()
@@ -831,6 +831,38 @@ def save_gpkg(camada, filename, texto_id_file ):
     QgsVectorFileWriter.writeAsVectorFormat(class_notes, filename, options)
     #QgsVectorFileWriter.writeAsVectorFormat(camada, filename, options)
     
+'''
+#################################################
+def save_gpkg(camada, filename, nome_camada, option_A):
+    dp = camada.dataProvider()
+    # Configurar opções de salvamento
+    destination_crs = dp.crs()
+    options = QgsVectorFileWriter.SaveVectorOptions()
+    options.driverName = "GPKG"
+    options.fileEncoding = "UTF-8"
+    options.layerName = nome_camada
+    #options.destinationCrs = dp.crs()# QgsCoordinateReferenceSystem('EPSG:4326')
+    # options.onlySelectedFeatures = True
+    # options.layerOptions = ['OVERWRITE=YES']
+    layer = camada # iface.activeLayer()
+    output_path = filename #"/path/to/output/file.gpkg"
+    #layer_name = nome_camada # "my_layer"
+           
+    options.actionOnExistingFile = option_A #QgsVectorFileWriter.CreateOrOverwriteFile # Crie ou sobrescreva a camada no GeoPackage
+
+    # Salve a camada no GeoPackage
+    QgsVectorFileWriter.writeAsVectorFormat(camada, filename, options)
+    # Salve a camada no GeoPackage
+    #QgsVectorFileWriter.writeAsVectorFormatV2(layer, output_path, options)
+    '''
+    CreateOrOverwriteFile       -   Create or overwrite file.
+    CreateOrOverwriteLayer 	    -   Create or overwrite layer.
+    AppendToLayerNoNewFields    -   Append features to existing layer, but do not create new fields.
+
+AppendToLayerAddFields 	
+Append features to existing layer, and create new fields if needed.
+
+'''
 #################################################
 # classe ocorrencia (inspecao_p)
 def camada_virtual():
@@ -890,7 +922,46 @@ def load_sample_plan(nome_arquivo, ATIVO, codigo_arquivo, directory, texto_metad
                                         )
         #return layer_sample
        
+def load_simbology(ATIVO, codigo_arquivo, directory):
+            # SIMBOLOGIA
+            # criar função define_style
+            dir_style = os.path.dirname(__file__) # 'C:\\Users/Admin/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SampleByArea'
+            style_inspecao_a = (dir_style + '/inspecao_a.qml')
+            style_inspecao_l = (dir_style + '/inspecao_l.qml')
+            style_inspecao_p = (dir_style + '/inspecao_p.qml')
+            # layer_sample = iface.addVectorLayer(nome_arquivo, "" ,"ogr")
+            # Obter camadas do projeto (QgsProject)
+            project = QgsProject.instance()
+            # Definir o nome da camada e o nome do estilo
+            layer_name = "sample_" + str(ATIVO) + "_" + str(codigo_arquivo)
+            layer_inspecao = "inspecao_p"
+            # Verificar se a camada existe no projeto
+            layer_p = project.mapLayersByName(layer_name)[0]
+            inspecao_p = project.mapLayersByName(layer_inspecao)[0]
+            
+            geometry = layer_p.wkbType()
+            geometry_type = QgsWkbTypes.displayString(geometry)
+            
+            #carregar estilos (QML)
+            if ATIVO == "area":
+                layer_p.loadNamedStyle(style_inspecao_a)
+                inspecao_p.loadNamedStyle(style_inspecao_p)
+            if ATIVO == "feature":
+                inspecao_p.loadNamedStyle(style_inspecao_p)
+                if geometry_type == QgsWkbTypes.Point or geometry_type == QgsWkbTypes.MultiPoint:
+                    layer_p.loadNamedStyle(style_inspecao_p)
 
+                if geometry_type == QgsWkbTypes.LineString or geometry_type == QgsWkbTypes.MultiLineString:
+                    layer_p.loadNamedStyle(style_inspecao_l)
+                    
+                if geometry_type == QgsWkbTypes.Polygon or geometry_type == QgsWkbTypes.MultiPolygon:
+                    layer_p.loadNamedStyle(style_inspecao_a)                  
+                    
+            # Salvar o estilo no diretorio
+            layer_p.saveNamedStyle(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
+            inspecao_p.saveNamedStyle(directory + "/inspecao_p.qml")
+
+'''
 def load_simbology(ATIVO, codigo_arquivo, directory):
             # SIMBOLOGIA
             # nome dos estilos
@@ -935,4 +1006,4 @@ def load_simbology(ATIVO, codigo_arquivo, directory):
             # Salvar o estilo no diretorio
             layer_p.saveNamedStyle(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
             inspecao_p.saveNamedStyle(directory + "/inspecao_p.qml")      
-       
+'''       
