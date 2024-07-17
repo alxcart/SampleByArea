@@ -893,7 +893,12 @@ def load_sample_plan(nome_arquivo, ATIVO, codigo_arquivo, directory, texto_metad
             f.write(texto_metadado)
             f.close()
             # CARREGA PLANO DE AMOSTRAGEM
-            layer_sample = iface.addVectorLayer(nome_arquivo, "" ,"ogr") 
+            # Adicionar a camada ao projeto
+            QgsProject.instance().addMapLayer(layer)
+            layer_sample = iface.addVectorLayer(nome_arquivo, "" ,"ogr")
+            # Adicionar a camada no topo da lista de camadas
+            #iface.layerTreeView().setCurrentLayer(layer)
+            #iface.layerTreeView().moveLayer(layer, 0)
             
             # CARREGA SIMBOLOGIA            
             load_simbology(ATIVO, codigo_arquivo, directory)
@@ -948,3 +953,37 @@ def load_simbology(ATIVO, codigo_arquivo, directory):
             # Salvar o estilo no diretorio
             layer_p.saveNamedStyle(directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qml")
             inspecao_p.saveNamedStyle(directory + "/inspecao_p.qml")
+    
+def load_group_top(nome_grupo):
+    # Obter a instância do projeto
+    project = QgsProject.instance()
+    # Acessar a árvore de camadas
+    layer_tree = project.layerTreeRoot()
+
+    # Nome do grupo que você quer mover para o topo
+    group_name = str(nome_grupo)
+
+    # Encontrar o grupo pelo nome
+    group_to_move = layer_tree.findGroup(group_name)
+    
+    if group_to_move:
+        # Obter todos os filhos do nó raiz
+        children = layer_tree.children()
+    
+        # Verificar se o grupo já está no topo
+        if children.index(group_to_move) != 0:
+            # Criar uma lista com o grupo movido para o topo
+            new_children = [group_to_move] + [child for child in children if child != group_to_move]
+        
+            # Limpar os filhos atuais do nó raiz
+            layer_tree.removeAllChildren()
+        
+            # Inserir os novos filhos na árvore de camadas
+            for child in new_children:
+                layer_tree.addChildNode(child)
+        
+            #print(f"Grupo '{group_name}' movido para o topo.")
+        #else:
+            #print("O grupo já está no topo.")
+    #else:
+        #print(f"Grupo '{group_name}' não encontrado.")
