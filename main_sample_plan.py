@@ -489,7 +489,8 @@ def output_sample_plan(pop_size, sample_size, selection, directory, grade, isSel
                 
         if ATIVO == "area":
             geometry = 6 #'MultiPolygon'
-            geom_type_str = QgsWkbTypes.displayString(geometry)
+            #geom_type_str = QgsWkbTypes.displayString(geometry)
+            geom_type_str = QgsWkbTypes.displayString(QgsWkbTypes.Type(geometry))
             #fields = add_fields_by_area(file) 
         
         #fields = add_fields_by_area(dp)
