@@ -27,30 +27,27 @@ from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
 from PyQt5.QtXml import QDomDocument
 
 from qgis.core import *
-from math import ceil
-#import os.path
-from osgeo import ogr
-import random
-
 from .main_sample_plan import * # functions of project
-#from .constants import * # constants of project
-#import sys # usar no desenvolvimento #
-#sys.path.append(os.path.abspath(r"C:/Users/Admin/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/SampleByArea/"))
-#from main_sample_plan import *
-
-# based on the clip_multiple_layers plugin
 import processing, os, subprocess, time
 from qgis.utils import *
 from qgis.PyQt.QtCore import *
-from processing.algs.gdal.GdalUtils import GdalUtils
+#from processing.algs.gdal.GdalUtils import GdalUtils
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .SampleByArea_dialog import SampleByAreaDialog
-import os.path
+import os.path   
 
-   
+#from math import ceil
+#import os.path
+#from osgeo import ogr
+#import random
+#from .constants import * # constants of project
+#import sys # usar no desenvolvimento #
+#sys.path.append(os.path.abspath(r"C:/Users/Admin/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/SampleByArea/"))
+#from main_sample_plan import *
+# based on the clip_multiple_layers plugin
 
 class SampleByArea:
     """QGIS Plugin Implementation."""
@@ -310,33 +307,30 @@ class SampleByArea:
             tipo_inspecao = self.dlg.comboBoxType.currentIndex()
             lqa = self.dlg.comboBoxLQA.currentIndex()
 
-            #ATIVO = "area"
-            #ATIVO = "feature"
-            
-            ###########  Sample by area ###############################   
+            ##################################################################
+            ###########  SAMPLE BY AREA ######################################
+            ##################################################################
             if ATIVO =="area": 
                 isSelectedId, features, N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = grid_square(selection, nivel_inspecao, lqa, tipo_inspecao, size)
             
-            ###########  Sample by features ###########################   
-
+            ##################################################################
+            ###########  SAMPLE BY FEATURE ###################################
+            ##################################################################
             if ATIVO == "feature":
-                N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao, ATIVO)
+                N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg = sample_plan (features_selection(selection), nivel_inspecao, lqa + 4 , tipo_inspecao)
                 features = selection 
                 isSelectedId = sample_features(N, n)
-                
               
             
-            if N > n and ATIVO == "area":
-                #codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_grade (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao, ATIVO)
-                codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_plan (N, n, selection, directory, features, isSelectedId, msg, num_aceitacao, ATIVO)
+            if N > n: 
+                #### INICIO PLANO DE AMOSTRAGEM #######
+                codigo_arquivo, nome_arquivo, amostra_virtual = output_sample_plan(N, n, selection, directory, features, isSelectedId, msg, num_aceitacao, ATIVO)
                 filename = nome_arquivo
                 ly_virtual = amostra_virtual
                 size = selection.__len__()
                 
                 sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
                 texto_metadado = metadado(sumario, texto_resultado, size, selection.name(), nome_arquivo)
-                save_gpkg(ly_virtual, filename, codigo_arquivo)  
-                geopackage_path = nome_arquivo
 
                 layer = QgsVectorLayer(nome_arquivo, "sample_" + str(ATIVO) + "_" + str(codigo_arquivo) ,"ogr")
                 if layer.isValid() == True:
@@ -381,15 +375,6 @@ class SampleByArea:
                 ### SUMARY SAMPLE PLAN                                            
                     QMessageBox.about(None, "Sample by area", sumario)
 
-                ### METADADOS
-
-                if layer.isValid() == False:
-                    QMessageBox.warning(None, "Sample by area", "O arquivo " + 
-                                        codigo_arquivo + " já existe na pasta.\n" +
-                                        "\n   Por favor, alterar os parâmetros do plano de amostragem" +
-                                        "\nou selecionar uma nova pasta.\n"
-                                        )
-            
             # INSPECAO COMPLETA                                           
             if N <= n:
                 msg_complete( N, n, msg)
