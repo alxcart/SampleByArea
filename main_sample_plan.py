@@ -800,19 +800,25 @@ def get_layer():
     return lyr_selected
 
 #################################################
+#def data_sample():
+#    import datetime
+#    from datetime import date, datetime
+#    # data geopakage
+#    data = datetime.now()
+#    ano = data.year
+#    mes = data.month
+#    dia = data.day
+#    hora = data.hour
+#    minuto = data.minute
+#    segundo = data.second
+#    tx_data = str(ano)+str(mes)+str(dia)+str(hora)+str(minuto)+str(segundo)
+#    return tx_data
+
+#################################################
 def data_sample():
-    import datetime
-    from datetime import date, datetime
-    # data geopakage
-    data = datetime.now()
-    ano = data.year
-    mes = data.month
-    dia = data.day
-    hora = data.hour
-    minuto = data.minute
-    segundo = data.second
-    tx_data = str(ano)+str(mes)+str(dia)+str(hora)+str(minuto)+str(segundo)
-    return tx_data
+    from datetime import datetime
+    # Gera timestamp fixo com 14 dígitos
+    return datetime.now().strftime("%Y%m%d%H%M%S")
 
 #################################################
 def save_gpkg(camada, filename, nome_camada): #, option_A)

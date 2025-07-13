@@ -24,8 +24,6 @@ This plugin elaborates the area-oriented sampling plan. It is based on the ISO 1
 from PyQt5.QtCore import QSettings, QTranslator, QCoreApplication, qVersion
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox
-from PyQt5.QtXml import QDomDocument
-
 from qgis.core import *
 from .main_sample_plan import * # functions of project
 import processing, os, subprocess, time
@@ -332,49 +330,22 @@ class SampleByArea:
                 sumario, texto_resultado = msg_sample_plan( N, n, num_aceitacao, letra_codigo_i, letra_codigo_f, msg, lqa, nivel_inspecao)
                 texto_metadado = metadado(sumario, texto_resultado, size, selection.name(), nome_arquivo)
 
-                layer = QgsVectorLayer(nome_arquivo, "sample_" + str(ATIVO) + "_" + str(codigo_arquivo) ,"ogr")
-                if layer.isValid() == True:
-                    f = open (directory + "/sample_" + str(ATIVO) + "_" + codigo_arquivo + ".qmd", "w+")
-                    f.write(texto_metadado)
-                    f.close()
-                    # criar função define_style
-                    dir_style = os.path.dirname(__file__) # 'C:\\Users/Admin/AppData/Roaming/QGIS/QGIS3\\profiles\\default/python/plugins\\SampleByArea'
-                    style_inspecao_a = (dir_style + '/inspecao_a.qml')
-                    style_inspecao_l = (dir_style + '/inspecao_l.qml')
-                    style_inspecao_p = (dir_style + '/inspecao_p.qml')
-                    layer_sample = iface.addVectorLayer(nome_arquivo, "" ,"ogr")
-                                     
-                    project = QgsProject.instance()
-                    layer_name = "sample_" + str(ATIVO) + "_" + str(codigo_arquivo)
-                    layer_inspecao = "inspecao_p"
-                    layer_p = project.mapLayersByName(layer_name)[0]
-                    style_name = "sample_" + str(ATIVO) + str(codigo_arquivo)
-                    style_name_inspecao_p = "inspecao_p_style"
-                    
-                    layer_p.loadNamedStyle(style_inspecao_a)
-                    
-                    inspecao_p = project.mapLayersByName(layer_inspecao)[0]
-                    inspecao_p.loadNamedStyle(style_inspecao_p)
-                    
-                    # SALVA SIMBOLOGIA NO GEOPACKAGE (PENDENTE)
-                    #try:
-                    #    result = layer_p.exportNamedStyle(style_name, geopackage_path, True, "")
-                    
-                    #except TypeError:
-                    #    # Melhorar script nesse ponto
-                    #    QMessageBox.critical(None, "Export Styled", "Load style inspecao p failed")
-                    #return True
-                 
-                    #try:
-                    #    result = inspecao_p.exportNamedStyle("sample_" + str(ATIVO) + str(codigo_arquivo), geopackage_path, "gpkg", True)
-                    
-                    #except TypeError:
-                    #    QMessageBox.critical(None, "Export Styled", "Load style sample area failed")
-                    #return True
+                #### SALVAR GEOPACKAGE #######
+                nome_camada = str("sample_" + str(ATIVO) + "_" +  str(codigo_arquivo))
+                option_1 = QgsVectorFileWriter.CreateOrOverwriteFile 
+                #option_2 = QgsVectorFileWriter.CreateOrOverwriteLayer 
+                save_gpkg(ly_virtual, filename, nome_camada)#, option_1)
 
-                ### SUMARY SAMPLE PLAN                                            
-                    QMessageBox.about(None, "Sample by area", sumario)
+                #### CLASSE OCORRENCIA ######
+                classe_ocorrencia = camada_virtual()
+                nome_camada = "inspecao_p" #"sample_" + str(ATIVO) + "_" +  str(codigo_arquivo)
+                #option_1 = QgsVectorFileWriter.CreateOrOverwriteFile 
+                option_2 = QgsVectorFileWriter.CreateOrOverwriteLayer 
+                save_gpkg(classe_ocorrencia, filename, nome_camada)#, option_2)  
+                
+                #### LAYER PLANO DE AMOSTRAGEM
+                load_sample_plan(nome_arquivo, ATIVO, codigo_arquivo, directory, texto_metadado, sumario)
+               
 
-            # INSPECAO COMPLETA                                           
             if N <= n:
                 msg_complete( N, n, msg)

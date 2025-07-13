@@ -7,32 +7,29 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=Sample by area
+name=Sample by Area
 qgisMinimumVersion=3.0
-description=The sampling plan by area calculates the sample size (n) from size of area of interess (N = AOI), inspection level (I, II or III) and acceptable quality limit (AQL).This plugin draws up an area-based sampling plan based on the area of interest for quality inspection. The plugin is based on ISO 19157: 2013 (Spatial Data Quality) and ISO 2859 (Attribute sampling inspection procedures).
-version=1.1
+description=Creates area-based sampling plans for spatial data quality inspection, based on the size of the area of interest (AOI), inspection level (I, II, or III), and acceptable quality limit (AQL). Based on ISO 19157:2013 and ISO 2859 standards.
+version=1.3.0
 author=Alex Santos
 email=alxcart@gmail.com
 
-about=The objective is to generate sampling units (inspection areas) to carry out inspections of quality aspects desired by the user
+about=This plugin generates area-based sampling units (inspection areas) to support the quality inspection of spatial datasets, using customizable parameters such as inspection level and acceptable quality limits. It is based on ISO 19157:2013 and ISO 2859 sampling procedures.
 
 tracker=https://github.com/alxcart/SampleByArea/issues
 repository=https://github.com/alxcart/SampleByArea
-# End of mandatory metadata
 
-# Recommended items:
+changelog=\
+- Adjusted date format presentation (now YYYYMMDD).\
+- Minor bug fixes.\
+- Script optimization.\
+- Layout improvements.\
+- Added 'layer' field.
 
-# Uncomment the following line and add your changelog:
-# changelog= fix bug QGIS 3.34, added layer field. revised layout, resolved some bugs, script optimization
-
-# Tags are comma separated with spaces allowed
-tags= sampling plan, spatial data quality, sample, feature, vector, quality, iso 19157:2013, acceptable quality limit, AQL, LQA, amostra, amostragem, geopackage
+tags=sampling plan, spatial data quality, sample, feature, vector, ISO 19157:2013, AQL, LQA, amostragem, geopackage, inspection, QGIS
 
 homepage=https://github.com/alxcart/SampleByArea/wiki
 category=Vector
 icon=icon.png
-# experimental flag
 experimental=False
-
-# deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
